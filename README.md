@@ -1,7 +1,5 @@
 PHP-Javascript-Spell-Checker
 ============================
-
-### Javascript/PHP Spell Checker ###
 v1.0.0
 
 Drop-in spell check functionality for web applications.
@@ -17,7 +15,6 @@ Drop-in spell check functionality for web applications.
 
 ### Requirements ###
 * PHP 5 with Pspell extension installed
-* Pspell extension
 
 ### Getting Started ###
 Copy `spellcheck.php` to your web directory. Include `spellcheck-1.0.0.min.css` and `spellcheck-1.0.0.min.js` into your page:
