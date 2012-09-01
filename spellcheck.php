@@ -11,15 +11,6 @@
  * http://www.php.net/manual/en/book.pspell.php 
  */ 
 
-if (!empty($_SERVER['HTTP_REFERER'])) {
-	if (false === strpos($_SERVER['HTTP_REFERER'],'lpology.com')) {
-		exit(json_encode(array('success' => false)));
-	}
-}
-else {
-	exit(json_encode(array('success' => false)));
-} 
-
 if (isset($_REQUEST['text'])) {
 	$text = $_REQUEST['text'];
 } else {
