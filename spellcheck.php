@@ -21,7 +21,7 @@ if (!$pspell = pspell_new('en')) {
 	exit(json_encode(array('success' => false)));
 }
 
-$words = preg_split('/[\W]+?/',$text);
+$words = preg_split('/[^A-Za-z_-]+?/', $text);
 $misspelled = array();
 $return = array();
 
