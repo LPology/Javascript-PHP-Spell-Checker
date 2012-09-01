@@ -6,7 +6,7 @@ v1.0.0
 
 Drop-in spell check functionality for web applications.
 
-<a href="http://www.lpology.com/code/spellcheck/">Try a Demo</a>
+<strong><a href="http://www.lpology.com/code/spellcheck/">Try a Demo</a></strong>
 
 ### Features ###
 * Designed to mimic the appearance and feel of desktop word processor spell checkers.
