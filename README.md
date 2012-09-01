@@ -1,18 +1,22 @@
+PHP-Javascript-Spell-Checker
+============================
+
 ### Javascript/PHP Spell Checker ###
 v1.0.0
 
 Drop-in spell check functionality for web applications.
 
+<a href="http://www.lpology.com/code/spellcheck/">Try a Demo</a>
+
 ### Features ###
-* No configuration required.
 * Designed to mimic the appearance and feel of desktop word processor spell checkers.
-* Offers suggestions for misspelled words.
+* Provides suggestions for misspelled words.
 * Pure Javascript -- requires no external libraries.
-* Fast and lightweight - only 2.3KB minified and gzipped.
+* Fast and lightweight - only 2.9KB minified and gzipped.
 * Tested in IE7+, Firefox 4+, Safari 4+, and Chrome.
 
 ### Requirements ###
-* PHP 5
+* PHP 5 with Pspell extension installed
 * Pspell extension
 
 ### Getting Started ###
@@ -20,8 +24,8 @@ Copy `spellcheck.php` to your web directory. Include `spellcheck-1.0.0.min.css` 
 
 ```html
 <head>
-	<link rel="stylesheet" href="spellcheck-min.css">
-	<script type="text/javascript" src="spellcheck-min.js"></script>
+	<link rel="stylesheet" href="spellcheck-1.0.0.min.css">
+	<script type="text/javascript" src="spellcheck-1.0.0.min.js"></script>
 </head>
 ```
 
@@ -42,4 +46,4 @@ var checker = new sc.SpellChecker(
 ```
 
 ### License ###
-Dual licensed under the MIT or GPL Version 2 licenses.
+Released under the MIT license.
