@@ -33,7 +33,7 @@ Initialize the spell checker when the DOM is ready. There are three required par
 var checker = new sc.SpellChecker(
 	'spellcheck_button', // HTML element that will open the spell checker when clicked
 	'text_box', // HTML field containing the text to spell check
-	'/spell.php' // URL of the server side script 
+	'/spellcheck.php' // URL of the server side script 
 );
 ```
 
