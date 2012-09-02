@@ -17,7 +17,7 @@ if (isset($_REQUEST['text'])) {
 	exit(json_encode(array('success' => false)));
 }
 
-if (!$pspell = pspell_new('en')) {
+if (!$pspell = pspell_new('en', '', '', '', PSPELL_FAST)) {
 	exit(json_encode(array('success' => false)));
 }
 
