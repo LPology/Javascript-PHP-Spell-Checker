@@ -245,6 +245,9 @@ sc.SpellChecker.prototype = {
 		self._isOpen = false;
 		self._uniqueID = sc.getId();
 		self._createHTML();
+		
+		currentBox = sc._('spell-current'+self._uniqueID);
+		contextBox = sc._('spell-context'+self._uniqueID);		
 								
 		sc.addEvent(self._button, 'click', function() {
 			self._openChecker();
@@ -267,16 +270,14 @@ sc.SpellChecker.prototype = {
 		sc.addEvent('spell-msg-close'+self._uniqueID, 'click', function() {
 			self._closeChecker();
 		});
+				
 		sc.addEvent('spell-undo'+self._uniqueID, 'click', function() {
 			if (self._canUndo === false) {
 				return;
 			}
 			self._undoChange();
 		});			
-		
-		currentBox = sc._('spell-current'+self._uniqueID);
-		contextBox = sc._('spell-context'+self._uniqueID);		
-		
+				
 		// Unselect any suggestion if user clicks either input so that word is 
 		// changed to correct spelling
 		sc.addEvent(currentBox, 'click', function() {
@@ -315,10 +316,13 @@ sc.SpellChecker.prototype = {
 			return;
 		}
 
-		self._isOpen = true;
-		self._canUndo = false;		
+		sc._('spell-undo'+self._uniqueID).setAttribute('disabled', true);
+		self._canUndo = false;	
+		
+		sc._('spell-overlay'+self._uniqueID).style.display = 'block';		
+		self._isOpen = true;	
+		
 		self._text = text;
-		sc._('spell-overlay'+self._uniqueID).style.display = 'block';
 				
 		// Close the spell checker if user presses escape key
 		self._esc = function(event) {
@@ -329,6 +333,7 @@ sc.SpellChecker.prototype = {
 			
 		sc.addEvent(document, 'keyup', self._esc);			
 		self._notifyMsg('checking');
+		
 		// Send the text to the server
 		self._sendData();		
 	},
@@ -461,7 +466,10 @@ sc.SpellChecker.prototype = {
 		self._undoPrevious = currentWord;
 		self._previousWordMatches = wordMatches;
 		self._previousMatchOffset = matchOffset;
-		self._canUndo = true;			
+		self._canUndo = true;
+		
+		// Enable the "Undo" button
+		sc._('spell-undo'+self._uniqueID).removeAttribute('disabled');
 						
 		if (selected_option > -1) {
 			new_word = select.options[selected_option].text; // Use suggestion if one is selected
@@ -531,6 +539,9 @@ sc.SpellChecker.prototype = {
 		
 		// Prevent another undo
 		self._canUndo = false;
+		
+		// Disable the "Undo" button
+		sc._('spell-undo'+self._uniqueID).setAttribute('disabled', true);		
 		
 		// Empty the backup text area
 		backupTextarea.value = '';
