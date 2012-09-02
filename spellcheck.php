@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Javascript/PHP Spell Checker v1.0.0
+ * Javascript/PHP Spell Checker v1.1
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012 LPology, LLC  

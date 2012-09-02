@@ -1,4 +1,4 @@
-/** Javascript/PHP Spell Checker v1.0.0  */ 
+/** Javascript/PHP Spell Checker v1.1 https://github.com/LPology/Javascript-PHP-Spell-Checker */ 
 .spell-wrap button,.spell-wrap input,.spell-wrap select,.spell-wrap textarea{margin:0;font-size:100%;vertical-align:middle;}
 .spell-wrap button,.spell-wrap input{overflow:visible;line-height:normal;zoom:1;}
 .spell-wrap button::-moz-focus-inner,.spell-wrap input::-moz-focus-inner{padding:0;border:0;}
