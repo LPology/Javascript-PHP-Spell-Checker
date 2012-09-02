@@ -422,23 +422,28 @@ sc.SpellChecker.prototype = {
 		var self = this,
 			keys = self._wordKeys,
 			wordMatches = self._wordMatches,
-			matchOffset = self._matchOffset;
-			
+			matchOffset = self._matchOffset,
+			moreMatches;
+
 		if (ignoreAll === true || wordMatches <= 1 || matchOffset === wordMatches) {
 			keys.splice(0, 1);
-			self._wordMatches = 0;
-			self._matchOffset = 1;			
+			self._matchOffset = 1; // Reset to 1 in case there is another word to review	
+			moreMatches = false;
 		} else {
 			// Increment the match counter because we're using the same word next round
-			matchOffset = matchOffset + 1;
-			self._matchOffset = matchOffset;
+			// This prevents us from reviewing the same occurrence of this word
+			self._matchOffset = matchOffset + 1;
+			moreMatches = true; // There are remaining duplicates of this word to review
 		}
 		
+		// Disable "Undo" in case the prior action was a change
+		sc._('spell-undo'+self._uniqueID).setAttribute('disabled', true);
+		self._canUndo = false;
 		self._wordKeys = keys;	
-		
-		if (keys.length > 0) {
+
+		if (keys.length > 0 || moreMatches === true) {
 			// Continue editing if that wasn't the last word			
-			self._reviewWord();
+			self._reviewWord(false);
 		} else {
 			self._notifyMsg('finished');
 		}		
@@ -459,17 +464,18 @@ sc.SpellChecker.prototype = {
 			keys = self._wordKeys,
 			m = 0,
 			new_word,
-			new_text;
+			new_text,
+			moreMatches;
 		
 		// Save backup copy of text and current state of variables for restoration on "Undo"
 		sc._('spell-hidden'+self._uniqueID).value = text;		
 		self._undoPrevious = currentWord;
 		self._previousWordMatches = wordMatches;
 		self._previousMatchOffset = matchOffset;
-		self._canUndo = true;
 		
 		// Enable the "Undo" button
 		sc._('spell-undo'+self._uniqueID).removeAttribute('disabled');
+		self._canUndo = true;
 						
 		if (selected_option > -1) {
 			new_word = select.options[selected_option].text; // Use suggestion if one is selected
@@ -488,20 +494,18 @@ sc.SpellChecker.prototype = {
 		// Only remove the replaced word if we won't need it again
 		if (changeAll === true || wordMatches <= 1 || matchOffset === wordMatches) {
 			keys.splice(0, 1);
-			self._wordMatches = 0;
-			self._matchOffset = 1;			
+			self._matchOffset = 1; // Reset to 1 in case there is another word to review			
+			moreMatches = false; // No remaining duplicates of this word
 		} else {
-			// Increment the match counter because we're using the same word next round
-			matchOffset = matchOffset + 1;
-			self._matchOffset = matchOffset;
+			moreMatches = true; // There are remaining duplicates of this word to review
 		}
 		
 		self._textInput.value = new_text;
 		self._text = new_text;			
 		self._wordKeys = keys;
 		
-		if (keys.length > 0) {
-			self._reviewWord();
+		if (keys.length > 0 || moreMatches === true) {
+			self._reviewWord(false);
 		} else {
 			self._notifyMsg('finished');
 		}
@@ -593,10 +597,10 @@ sc.SpellChecker.prototype = {
 			regex = new RegExp(currentWord, 'g'),			
 			newText,
 			i=0;
-					
+
 		newText = text.replace(regex, function(match, index) {
 				i++;
-					
+
 				if (i === matchOffset) {
 					var firstHalf,
 						secondHalf,
@@ -641,7 +645,7 @@ sc.SpellChecker.prototype = {
 	 * Executes at beginning of spell check if the server reports spelling errors or 
 	 * after resolving the last word and moving to the next.
 	 */		
-	_reviewWord: function() {	
+	_reviewWord: function(startNew) {	
 		var self = this,
 			keys = self._wordKeys, // Array of misspelled words that have not yet been resolved by changing or ignoring
 			currentWord = keys[0], // The misspelled word currently being reviewed (always the first element of the keys array)
@@ -652,8 +656,14 @@ sc.SpellChecker.prototype = {
 				
 		// Find how many occurrences of the misspelled word so each one is reviewed
 		self._wordMatches = self._text.match(regex).length;
-		self._matchOffset = 1;
 		
+		if (startNew === false) {
+			self._matchOffset = self._matchOffset;
+		}
+		else {
+			self._matchOffset = 1;
+		}
+
 		self._setSuggestionOptions();
 		self._setContextBox();	
 	},
@@ -675,7 +685,7 @@ sc.SpellChecker.prototype = {
 				keys = sc.objectKeys(self._wordObject);
 				self._wordKeys = keys;
 				self._showReviewer();
-				self._reviewWord();
+				self._reviewWord(true);
 			} else {
 				// No spelling errors were found
 				self._notifyMsg('noerrors');
