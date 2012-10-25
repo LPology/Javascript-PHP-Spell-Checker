@@ -27,5 +27,5 @@ div.spell-wrap div.spell-nf{width:308px;float:left;clear:both}
 div.spell-wrap div.spell-ignorebtns{float:left}
 div.spell-wrap div.spell-changebtns{float:left;height:130px}
 div.spell-wrap div.spell-changebtns button,div.spell-wrap div.spell-ignorebtns button{display:block!important;margin-bottom:8px!important}
-div.spell-wrap div.spell-suggest select{color:#555;background-color:#fff;border:1px solid #ccc;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;font-family:inherit;display:inline-block;padding:1px 3px;font-size:12px;line-height:15px;width:100%;float:left}
+div.spell-wrap div.spell-suggest select{color:#555;background-color:#fff;border:1px solid #ccc;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;font-family:inherit;display:inline-block;padding:1px 3px;font-size:12px;line-height:15px;width:100%;height:auto !important;float:left}
 div.spell-wrap div.close-box{clear:both;float:left;width:100%;text-align:right}

@@ -224,6 +224,7 @@ div.spell-wrap div.spell-suggest select {
 	font-size:12px;
 	line-height:15px;
 	width:100%;
+	height:auto !important;
 	float:left;
 }
 div.spell-wrap div.close-box {
