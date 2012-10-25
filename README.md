@@ -1,6 +1,5 @@
 PHP-Javascript-Spell-Checker
 ============================
-v1.1
 
 Drop-in spell check functionality for web applications.
 
@@ -10,7 +9,7 @@ Drop-in spell check functionality for web applications.
 * Designed to mimic the appearance and feel of desktop word processor spell checkers.
 * Provides suggestions for misspelled words.
 * Pure Javascript -- requires no external libraries.
-* Fast and lightweight - only 3.1KB minified and gzipped.
+* Fast and lightweight - only 3.2KB minified and gzipped.
 * Tested in IE7+, Firefox 4+, Safari 4+, and Chrome.
 
 ### Requirements ###
