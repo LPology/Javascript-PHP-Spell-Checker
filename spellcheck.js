@@ -242,7 +242,9 @@ sc.SpellChecker.prototype = {
     
     currentBox = sc._('spell-current'+self._uniqueID);
     contextBox = sc._('spell-context'+self._uniqueID);		
-                
+
+    self._button.className += ' spellcheck-trigger';
+    
     sc.addEvent(self._button, 'click', function() {
       self._openChecker();
     });

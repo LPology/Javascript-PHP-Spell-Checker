@@ -5,6 +5,9 @@
  * Copyright 2012-2013 LPology, LLC  
  * Released under the MIT license
  */ 
+.spellcheck-trigger:hover{
+  cursor:pointer;
+}
 .spell-wrap button, .spell-wrap input, .spell-wrap select,.spell-wrap textarea{
 	margin:0;
 	font-size:100%;
