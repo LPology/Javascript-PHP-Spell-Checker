@@ -21,7 +21,7 @@ Copy `spellcheck.php` to your web directory. Include `spellcheck.css` and `spell
 ```html
 <head>
 	<link rel="stylesheet" href="spellcheck.css">
-	<script type="text/javascript" src="spellcheck.js"></script>
+	<script src="spellcheck.js"></script>
 </head>
 ```
 
