@@ -4,7 +4,7 @@
  * Javascript/PHP Spell Checker
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
- * Copyright 2012 LPology, LLC  
+ * Copyright 2012-2013 LPology, LLC  
  * Released under the MIT license
  *
  * Requires the Pspell extension
