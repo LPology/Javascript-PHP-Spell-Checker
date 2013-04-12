@@ -26,9 +26,6 @@ $misspelled = array();
 $return = array();
 
 foreach ($words as $w) {
-	if (preg_match('/^[A-Z]*$/',$w)) {
-		continue;
-	}
 	if (!pspell_check($pspell, $w)) {
 		$misspelled[] = $w;
 	}
