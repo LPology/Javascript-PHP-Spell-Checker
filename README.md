@@ -1,4 +1,4 @@
-PHP-Javascript-Spell-Checker
+Javascript-PHP-Spell-Checker
 ============================
 
 Drop-in spell check functionality for web applications.
