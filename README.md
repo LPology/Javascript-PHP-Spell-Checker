@@ -16,12 +16,12 @@ Drop-in spell check functionality for web applications.
 * PHP5 with Pspell extension installed
 
 ### Getting Started ###
-Copy `spellcheck.php` to your web directory. Include `spellcheck-1.1.min.css` and `spellcheck-1.1.min.js` into your page:
+Copy `spellcheck.php` to your web directory. Include `spellcheck.css` and `spellcheck.js` into your page:
 
 ```html
 <head>
-	<link rel="stylesheet" href="spellcheck-1.1.min.css">
-	<script type="text/javascript" src="spellcheck-1.1.min.js"></script>
+	<link rel="stylesheet" href="spellcheck.css">
+	<script type="text/javascript" src="spellcheck.js"></script>
 </head>
 ```
 
