@@ -17,7 +17,7 @@ sc._ = function(elem) {
  */
 sc.objectKeys = function(obj) {
 	var prop,
-		keys = [];
+      keys = [];
 	if (typeof obj !== 'object') {
 		return false;
 	}
@@ -34,7 +34,7 @@ sc.objectKeys = function(obj) {
  */ 
 sc.obj2string = function(obj, prefix) {
     var str = [],
-		prop;
+        prop;
 	if (typeof obj !== 'object') {
 		return '';
 	}
@@ -63,6 +63,16 @@ sc.extendObj = function(first, second) {
 		}
 	}
 	return true;
+};
+
+sc.contains = function(a, obj) {
+  var i = a.length;
+  while (i--) {
+    if (a[i] === obj) {
+      return true;
+    }
+  }
+  return false;
 };
 
 sc.trim = function(text) {
@@ -100,27 +110,6 @@ sc.removeEvent = function(elem, type, fn) {
 	} else {
 		elem.removeEventListener(type, fn, false);
 	}
-};
-
-/**
- * Finds the index of an element with a particular offset within an array
- * @param {Array} arr
- * @param {Mixed} value
- * @return The index of the element within the array, or false if not found
- */
-sc.findIndex = function(arr, value, matchOffset) {
-	var i,
-		size,
-		matchNum = 1;
-	for (i = 0, size = arr.length; i < size; i++) {
-		if (arr[i] == value) {
-			if (matchNum == matchOffset) {
-				return i;
-			}
-			matchNum++;
-		}
-	}
-	return false;
 };
 
 sc.newXHR = function() {
@@ -241,73 +230,73 @@ sc.SpellChecker = function(options) {
 
 sc.SpellChecker.prototype = {
 
-    enable: function() {
-	
-		var self = this,
-			currentBox,
-			contextBox;
-		
-		self._isOpen = false;
-		self._uniqueID = sc.getId();
-		self._createHTML();
-		
-		currentBox = sc._('spell-current'+self._uniqueID);
-		contextBox = sc._('spell-context'+self._uniqueID);		
-								
-		sc.addEvent(self._button, 'click', function() {
-			self._openChecker();
-		});
-		sc.addEvent('spelling-ignore'+self._uniqueID, 'click', function() {
-			self._ignoreChange();
-		}); 
-		sc.addEvent('spelling-ignore-all'+self._uniqueID, 'click', function() {
-			self._ignoreChange(true);
-		});		
-		sc.addEvent('spell-change'+self._uniqueID, 'click', function() {
-			self._makeChange();
-		});
-		sc.addEvent('spell-change-all'+self._uniqueID, 'click', function() {
-			self._makeChange(true);
-		});		
-		sc.addEvent('spell-close'+self._uniqueID, 'click', function() {
-			self._closeChecker();
-		});	
-		sc.addEvent('spell-msg-close'+self._uniqueID, 'click', function() {
-			self._closeChecker();
-		});
-				
-		sc.addEvent('spell-undo'+self._uniqueID, 'click', function() {
-			if (self._canUndo === false) {
-				return;
-			}
-			self._undoChange();
-		});			
-				
-		// Unselect any suggestion if user clicks either input so that word is 
-		// changed to correct spelling
-		sc.addEvent(currentBox, 'click', function() {
-			sc._('spelling-suggestions'+self._uniqueID).selectedIndex = -1;
-		});
-		sc.addEvent(contextBox, 'click', function() {
-			sc._('spelling-suggestions'+self._uniqueID).selectedIndex = -1;
-		});		
-		
-		// Change "Not found in dictionary" if user edits within word context box
-		sc.addEvent(currentBox, 'keyup', function() {
-			var that = this,
-				span = contextBox.getElementsByTagName('span')[0];
-			if (span && span.firstChild) {					
-				span.firstChild.nodeValue = that.value;
-			}
-		});	
-		// Change word context also if user edits "Not found in dictionary" box		
-		sc.addEvent(contextBox, 'keyup', function() {
-			var that = this,
-				span = that.getElementsByTagName('span')[0];
-			if (span && span.firstChild) {
-				currentBox.value = span.firstChild.nodeValue;
-			}		
-		});		
+  enable: function() {
+    
+    var self = this,
+        currentBox,
+        contextBox;
+    
+    self._isOpen = false;
+    self._uniqueID = sc.getId();
+    self._createHTML();
+    
+    currentBox = sc._('spell-current'+self._uniqueID);
+    contextBox = sc._('spell-context'+self._uniqueID);		
+                
+    sc.addEvent(self._button, 'click', function() {
+      self._openChecker();
+    });
+    sc.addEvent('spelling-ignore'+self._uniqueID, 'click', function() {
+      self._ignoreChange();
+    }); 
+    sc.addEvent('spelling-ignore-all'+self._uniqueID, 'click', function() {
+      self._ignoreChange(true);
+    });		
+    sc.addEvent('spell-change'+self._uniqueID, 'click', function() {
+      self._makeChange();
+    });
+    sc.addEvent('spell-change-all'+self._uniqueID, 'click', function() {
+      self._makeChange(true);
+    });		
+    sc.addEvent('spell-close'+self._uniqueID, 'click', function() {
+      self._closeChecker();
+    });	
+    sc.addEvent('spell-msg-close'+self._uniqueID, 'click', function() {
+      self._closeChecker();
+    });
+        
+    sc.addEvent('spell-undo'+self._uniqueID, 'click', function() {
+      if (self._canUndo === false) {
+        return;
+      }
+      self._undoChange();
+    });			
+        
+    // Unselect any suggestion if user clicks either input so that word is 
+    // changed to correct spelling
+    sc.addEvent(currentBox, 'click', function() {
+      sc._('spelling-suggestions'+self._uniqueID).selectedIndex = -1;
+    });
+    sc.addEvent(contextBox, 'click', function() {
+      sc._('spelling-suggestions'+self._uniqueID).selectedIndex = -1;
+    });		
+    
+    // Change "Not found in dictionary" if user edits within word context box
+    sc.addEvent(currentBox, 'keyup', function() {
+      var that = this,
+        span = contextBox.getElementsByTagName('span')[0];
+      if (span && span.firstChild) {					
+        span.firstChild.nodeValue = that.value;
+      }
+    });	
+    // Change word context also if user edits "Not found in dictionary" box		
+    sc.addEvent(contextBox, 'keyup', function() {
+      var that = this,
+        span = that.getElementsByTagName('span')[0];
+      if (span && span.firstChild) {
+        currentBox.value = span.firstChild.nodeValue;
+      }		
+    });		
     },
 	
 	/**
@@ -315,7 +304,7 @@ sc.SpellChecker.prototype = {
 	 */			
 	_openChecker: function() {
 		var self = this,
-			text = self._textInput.value;
+        text = self._textInput.value;
 
 		if (self._isOpen === true) {
 			return;
@@ -392,16 +381,12 @@ sc.SpellChecker.prototype = {
 	 */		
 	_notifyMsg: function(type) {
 		var self = this,
-			msg,
-			closeBox = sc._('spell-msg-close-box'+self._uniqueID),
-			minHeight = 106,
-			marginTop = 53;
+        msg,
+        closeBox = sc._('spell-msg-close-box'+self._uniqueID);
 		
 		if (type == 'checking') {
 			msg = 'Checking...';
 			closeBox.style.display = 'none';
-			minHeight = 86;
-			marginTop = 43;
 		} else {
 			closeBox.style.display = 'block';
 		}
@@ -427,13 +412,12 @@ sc.SpellChecker.prototype = {
 	 */		
 	_ignoreChange: function(ignoreAll) {
 		var self = this,
-			keys = self._wordKeys,
-			wordMatches = self._wordMatches,
-			matchOffset = self._matchOffset,
-			moreMatches;
+        wordMatches = self._wordMatches,
+        matchOffset = self._matchOffset,
+        moreMatches;
 
 		if (ignoreAll === true || wordMatches <= 1 || matchOffset === wordMatches) {
-			keys.splice(0, 1);
+			self._wordKeys.splice(0, 1);
 			self._matchOffset = 1; // Reset to 1 in case there is another word to review	
 			moreMatches = false;
 		} else {
@@ -446,11 +430,10 @@ sc.SpellChecker.prototype = {
 		// Disable "Undo" in case the prior action was a change
 		sc._('spell-undo'+self._uniqueID).setAttribute('disabled', true);
 		self._canUndo = false;
-		self._wordKeys = keys;	
 
-		if (keys.length > 0 || moreMatches === true) {
+		if (self._wordKeys.length > 0 || moreMatches === true) {
 			// Continue editing if that wasn't the last word			
-			self._reviewWord(false);
+			self._reviewWord();
 		} else {
 			self._notifyMsg('finished');
 		}		
@@ -461,18 +444,17 @@ sc.SpellChecker.prototype = {
 	 */				
 	_makeChange: function(changeAll) {
 		var self = this,
-			text = self._text,
-			currentWord = self._currentWord,
-			wordMatches = self._wordMatches,
-			matchOffset = self._matchOffset,
-			select = sc._('spelling-suggestions'+self._uniqueID),
-			selected_option = select.selectedIndex,
-			regex = new RegExp(currentWord, 'g'),
-			keys = self._wordKeys,
-			m = 0,
-			new_word,
-			new_text,
-			moreMatches;
+        text = self._text,
+        currentWord = self._currentWord,
+        wordMatches = self._wordMatches,
+        matchOffset = self._matchOffset,
+        select = sc._('spelling-suggestions'+self._uniqueID),
+        selected_option = select.selectedIndex,
+        regex = new RegExp(currentWord, 'g'),
+        m = 0,
+        new_word,
+        new_text,
+        moreMatches;
 		
 		// Save backup copy of text and current state of variables for restoration on "Undo"
 		sc._('spell-hidden'+self._uniqueID).value = text;		
@@ -500,7 +482,7 @@ sc.SpellChecker.prototype = {
 		
 		// Only remove the replaced word if we won't need it again
 		if (changeAll === true || wordMatches <= 1 || matchOffset === wordMatches) {
-			keys.splice(0, 1);
+			self._wordKeys.splice(0, 1);
 			self._matchOffset = 1; // Reset to 1 in case there is another word to review			
 			moreMatches = false; // No remaining duplicates of this word
 		} else {
@@ -509,10 +491,9 @@ sc.SpellChecker.prototype = {
 		
 		self._textInput.value = new_text;
 		self._text = new_text;			
-		self._wordKeys = keys;
 		
-		if (keys.length > 0 || moreMatches === true) {
-			self._reviewWord(false);
+		if (self._wordKeys.length > 0 || moreMatches === true) {
+			self._reviewWord();
 		} else {
 			self._notifyMsg('finished');
 		}
@@ -523,11 +504,9 @@ sc.SpellChecker.prototype = {
 	 */			
 	_undoChange: function() {
 		var self = this,
-			previousWord = self._undoPrevious,
-			previousWordMatches = self._previousWordMatches,
-			previousMatchOffset = self._previousMatchOffset,
-			backupTextarea = sc._('spell-hidden'+self._uniqueID),			
-			previousText = backupTextarea.value;
+        previousWord = self._undoPrevious,
+        backupTextarea = sc._('spell-hidden'+self._uniqueID),			
+        previousText = backupTextarea.value;
 		
 		// Restore user text to pre-change state
 		self._textInput.value = previousText;
@@ -541,12 +520,14 @@ sc.SpellChecker.prototype = {
 		// Restore currentWord to value prior to change
 		self._currentWord = previousWord;
 
-		// Add previous word back to beginning of array		
-		self._wordKeys.unshift(previousWord); 
+		// Add previous word back to beginning of array	if it was removed	
+    if (!sc.contains(self._wordKeys, previousWord)) {
+      self._wordKeys.unshift(previousWord); 
+    }
 		
 		// Restore variables to their value prior to change
-		self._wordMatches = previousWordMatches;
-		self._matchOffset = previousMatchOffset;
+		self._wordMatches = self._previousWordMatches;
+		self._matchOffset = self._previousMatchOffset;
 		
 		// Prevent another undo
 		self._canUndo = false;
@@ -569,12 +550,12 @@ sc.SpellChecker.prototype = {
 	 */				
 	_setSuggestionOptions: function() {
 		var self = this,
-			wordObject = self._wordObject,
-			word = self._currentWord,
-			select_field = sc._('spelling-suggestions'+self._uniqueID),
-			suggestions = wordObject[word],
-			num = suggestions.length,
-			i;			
+        wordObject = self._wordObject,
+        word = self._currentWord,
+        select_field = sc._('spelling-suggestions'+self._uniqueID),
+        suggestions = wordObject[word],
+        num = suggestions.length,
+        i;			
 
 			select_field.options.length = 0;			
 
@@ -595,15 +576,15 @@ sc.SpellChecker.prototype = {
 	 */			
 	_setContextBox: function() {
 		var self = this,
-			currentWord = self._currentWord,
-			wordLength = currentWord.length,
-			matchOffset = self._matchOffset,
-			text = self._text,		
-			textLength = text.length,
-			contextBox = sc._('spell-context'+self._uniqueID),
-			regex = new RegExp(currentWord, 'g'),			
-			newText,
-			i=0;
+        currentWord = self._currentWord,
+        wordLength = currentWord.length,
+        matchOffset = self._matchOffset,
+        text = self._text,		
+        textLength = text.length,
+        contextBox = sc._('spell-context'+self._uniqueID),
+        regex = new RegExp(currentWord, 'g'),			
+        newText,
+        i = 0;
 
 		newText = text.replace(regex, function(match, index) {
 				i++;
@@ -650,9 +631,8 @@ sc.SpellChecker.prototype = {
 	 */		
 	_reviewWord: function(startNew) {	
 		var self = this,
-			keys = self._wordKeys, // Array of misspelled words that have not yet been resolved by changing or ignoring
-			currentWord = keys[0], // The misspelled word currently being reviewed (always the first element of the keys array)
-			regex = new RegExp(currentWord, 'g'); // Use a regular expression to find the misspelled word in the text
+        currentWord = self._wordKeys[0], // The misspelled word currently being reviewed (always the first element of the keys array)
+        regex = new RegExp(currentWord, 'g'); // Use a regular expression to find the misspelled word in the text
 			
 		self._currentWord = currentWord;
 		sc._('spell-current'+self._uniqueID).value = currentWord;
@@ -660,13 +640,6 @@ sc.SpellChecker.prototype = {
 		// Find how many occurrences of the misspelled word so each one is reviewed
 		self._wordMatches = self._text.match(regex).length;
 		
-		if (startNew === false) {
-			self._matchOffset = self._matchOffset;
-		}
-		else {
-			self._matchOffset = 1;
-		}
-
 		self._setSuggestionOptions();
 		self._setContextBox();	
 	},
@@ -675,20 +648,18 @@ sc.SpellChecker.prototype = {
 	 * Begins spell check process after data has been received from server
 	 */		
 	_begin: function(response) {
-		var self = this,
-			keys,
-			backupCopy = sc._('spell-hidden'+self._uniqueID); // Hidden textarea for storing backup copy of current text
-						
+		var self = this;
+    
 		if (response.success && response.success === true) {
 			// Open the review box if there were spelling errors found
 			if (response.errors && response.errors === true) {
-				backupCopy.value = self._text; // Save a copy of the current text to restore on "Undo"
+				sc._('spell-hidden'+self._uniqueID).value = self._text; // Save a copy of the current text to hidden textarea for restore on "Undo"
 				self._canUndo = false;
 				self._wordObject = response.words;
-				keys = sc.objectKeys(self._wordObject);
-				self._wordKeys = keys;
+				self._wordKeys = sc.objectKeys(self._wordObject);
+        self._matchOffset = 1;
 				self._showReviewer();
-				self._reviewWord(true);
+				self._reviewWord();
 			} else {
 				// No spelling errors were found
 				self._notifyMsg('noerrors');
@@ -701,8 +672,7 @@ sc.SpellChecker.prototype = {
 	 */		
 	_handleXHR: function(xhr) {		
 		var self = this,
-			response_text = sc.trim(xhr.responseText),
-			json_obj = sc.evalJSON(response_text);
+        json_obj = sc.evalJSON( sc.trim(xhr.responseText) );
 		
 		if (json_obj !== false) {
 			self._begin(json_obj);
@@ -716,10 +686,9 @@ sc.SpellChecker.prototype = {
 	 */		
 	_sendData: function() {
 		var self = this,
-			url = self._serverURL,
-			text = self._text,
-			xhr = sc.newXHR(),
-			data;
+        xhr = sc.newXHR(),
+        text = self._text,
+        data;
 			
 		// Don't waste a server request for less than 2 characters	
 		if (text.length < 2) {
@@ -742,7 +711,7 @@ sc.SpellChecker.prototype = {
 				}
 			};
 		
-		xhr.open('POST', url, true);
+		xhr.open('POST', self._serverURL, true);
 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xhr.send(data);				
 	},
@@ -752,10 +721,10 @@ sc.SpellChecker.prototype = {
 	 */		
 	_createHTML: function() {
 		var self = this,
-			overlay = document.createElement('div'),
-			modal = document.createElement('div'),
-			msgBox = document.createElement('div'),
-			hidden = document.createElement('textarea');				
+        overlay = document.createElement('div'),
+        modal = document.createElement('div'),
+        msgBox = document.createElement('div'),
+        hidden = document.createElement('textarea');				
 		
 		document.body.appendChild(overlay);	
 		overlay.setAttribute('id', 'spell-overlay'+self._uniqueID);
