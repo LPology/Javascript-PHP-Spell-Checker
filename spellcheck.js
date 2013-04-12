@@ -65,7 +65,6 @@ sc.extendObj = function(first, second) {
 	return true;
 };
 
-
 sc.trim = function(text) {
 	return text.toString().replace(/^\s+/, '').replace( /\s+$/, '');
 };
@@ -132,6 +131,12 @@ sc.newXHR = function() {
 			return new window.ActiveXObject('Microsoft.XMLHTTP');
 		} catch (err) {}
 	}
+};
+
+sc.encodeHTML = function(str) {
+    return str.replace(/[&<>"']/g, function($0) {
+        return "&" + {"&":"amp", "<":"lt", ">":"gt", '"':"quot", "'":"#39"}[$0] + ";";
+    });
 };
 
 sc.evalJSON = function(data) {
@@ -607,8 +612,7 @@ sc.SpellChecker.prototype = {
 					var firstHalf,
 						secondHalf,
 						startFirstHalf = index - 20,
-						startSecondHalf = index + wordLength,
-						result;
+						startSecondHalf = index + wordLength;
 
 					if (startFirstHalf < 0) {
 						firstHalf = text.substr(0, index);
@@ -632,9 +636,7 @@ sc.SpellChecker.prototype = {
 											.replace(/[^\s]+$/, '')
 											.replace(/\s+$/, '');					
 					
-					result = firstHalf+'<span class="word-highlight">'+currentWord+'</span>'+secondHalf;
-														
-					contextBox.innerHTML = result;
+					contextBox.innerHTML = sc.encodeHTML(firstHalf)+'<span class="word-highlight">'+sc.encodeHTML(currentWord)+'</span>'+sc.encodeHTML(secondHalf);														
 				}
 				return match;
 			});			
