@@ -1,7 +1,7 @@
 Javascript/PHP Spell Checker
 ============================
 
-Drop-in spell check functionality for web applications.
+Word processor style spell check functionality for web applications.
 
 <strong><a href="http://www.lpology.com/code/spellcheck/">Try a Demo</a></strong>
 
