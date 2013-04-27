@@ -33,7 +33,6 @@ Copy `spellcheck.php` to your web directory. Include `spellcheck.css` and `spell
 
 Initialize the spell checker when the DOM is ready. There are three required parameters:
 
-
 ```javascript
 var checker = new sc.SpellChecker(
 	button: 'spellcheck_button', // HTML element that will open the spell checker when clicked
@@ -45,6 +44,20 @@ var checker = new sc.SpellChecker(
 ```html
 <textarea id="text_box"></textarea>
 <input type="button" id="spellcheck_button" value="Check Spelling">
+```
+
+### Installing Pspell ###
+You'll need to install aspell, a dictionary, and the php-pspell module if not already installed:
+
+```
+sudo yum install aspell aspell-en
+sudo yum install php-pspell
+```
+
+Then restart Apache:
+
+```
+sudo service httpd restart
 ```
 
 ### License ###
