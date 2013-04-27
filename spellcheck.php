@@ -2,6 +2,7 @@
 
 /**
  * Javascript/PHP Spell Checker
+ * Version 1.3
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012-2013 LPology, LLC  
@@ -12,13 +13,13 @@
  */ 
 
 if (isset($_REQUEST['text'])) {
-	$text = $_REQUEST['text'];
+  $text = $_REQUEST['text'];
 } else {
-	exit(json_encode(array('success' => false)));
+  exit(json_encode(array('success' => false)));
 }
 
 if (!$pspell = pspell_new('en', '', '', '', PSPELL_FAST)) {
-	exit(json_encode(array('success' => false)));
+  exit(json_encode(array('success' => false)));
 }
 
 $words = preg_split('/[\W]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
@@ -26,17 +27,17 @@ $misspelled = array();
 $return = array();
 
 foreach ($words as $w) {
-	if (!pspell_check($pspell, $w)) {
-		$misspelled[] = $w;
-	}
+  if (!pspell_check($pspell, $w)) {
+    $misspelled[] = $w;
+  }
 }
 
 if (sizeof($misspelled) < 1) {
-	exit(json_encode(array('success' => true, 'errors' => false)));
+  exit(json_encode(array('success' => true, 'errors' => false)));
 }
 
 foreach ($misspelled as $m) {
-	$return[$m] = pspell_suggest($pspell, $m);
+  $return[$m] = pspell_suggest($pspell, $m);
 }
 
 echo json_encode(array('success' => true, 'errors' => true, 'words' => $return));
