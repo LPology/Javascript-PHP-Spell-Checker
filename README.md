@@ -1,9 +1,9 @@
 Javascript/PHP Spell Checker
 ============================
 
-Current version: 1.3
-
 Word processor style spell check functionality for web applications.
+
+Version 1.3
 
 <strong><a href="http://www.lpology.com/code/spellcheck/">Try a Demo</a></strong>
 
