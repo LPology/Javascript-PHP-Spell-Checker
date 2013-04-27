@@ -131,22 +131,22 @@ sc.encodeHTML = function(str) {
 };
 
 sc.evalJSON = function(data) {
-	var obj;
-	if (!data || typeof data !== 'string') {
+  var obj;
+  if (!data || typeof data !== 'string') {
     return false;
-	}
-	data = sc.trim(data);		
-	if (window.JSON && window.JSON.parse) {
+  }
+  data = sc.trim(data);		
+  if (window.JSON && window.JSON.parse) {
     obj = window.JSON.parse(data);
-	} else {
-		try {
-			obj = eval("(" + data + ")");
-		}
-		catch (err) {
-			return false;
-		}
-	}
-	return obj;
+  } else {
+    try {
+      obj = eval("(" + data + ")");
+    }
+    catch (err) {
+      return false;
+    }
+  }
+  return obj;
 };
 
 /**
@@ -301,14 +301,13 @@ sc.SpellChecker.prototype = {
 	 * Begins the spell check function.
 	 */			
 	_openChecker: function() {
-		var self = this,
-        text = self._textInput.value;
-
+		var self = this;
+    
 		if (self._isOpen === true) {
 			return;
 		}
 		
-		self._text = text;
+		self._text = self._textInput.value;
 		sc._('spell-undo'+self._uniqueID).setAttribute('disabled', true);		
 		sc._('spell-overlay'+self._uniqueID).style.display = 'block';
 		sc._('spell-modal'+self._uniqueID).style.display = 'block';	
@@ -555,18 +554,18 @@ sc.SpellChecker.prototype = {
         num = suggestions.length,
         i;			
 
-			select_field.options.length = 0;			
+    select_field.options.length = 0;			
 
-			// Return if there are no suggestions
-			if (num < 1) {
-				return;
-			}
-
-			for (i = 0; i < num; i++) {
-				select_field.options[i] = new Option(suggestions[i], suggestions[i]);				
-			}
-
-			select_field.selectedIndex = 0;
+    // Return if there are no suggestions
+    if (num < 1) {
+      return;
+    }
+    
+    for (i = 0; i < num; i++) {
+      select_field.options[i] = new Option(suggestions[i], suggestions[i]);				
+    }
+    
+    select_field.selectedIndex = 0;
 	},
 	
 	/**
@@ -581,43 +580,49 @@ sc.SpellChecker.prototype = {
         textLength = text.length,
         contextBox = sc._('spell-context'+self._uniqueID),
         regex = new RegExp(currentWord, 'g'),			
-        newText,
+        alphaNum = /^\w+$/,         
         i = 0;
 
-		newText = text.replace(regex, function(match, index) {
-				i++;
+		text.replace(regex, function(match, index) {
+      // Prevents false matches for substring of a word. Ex: 'pre' matching 'previous'
+      // Text is split by alphanumeric chars, so if the next char is alphanumeric, it's a false match
+      if (alphaNum.test(text.substr(index + wordLength, 1))) {
+        return match;
+      }
+      
+			i++;
 
-				if (i === matchOffset) {
-					var firstHalf,
-						secondHalf,
-						startFirstHalf = index - 20,
-						startSecondHalf = index + wordLength;
+			if (i === matchOffset) {
+				var firstHalf,
+					secondHalf,
+					startFirstHalf = index - 20,
+					startSecondHalf = index + wordLength;
 
-					if (startFirstHalf < 0) {
-						firstHalf = text.substr(0, index);
-					} else {
-						firstHalf = text.substr(startFirstHalf, 20);
-					}				
+				if (startFirstHalf < 0) {
+					firstHalf = text.substr(0, index);
+				} else {
+					firstHalf = text.substr(startFirstHalf, 20);
+				}				
 
-					if (startSecondHalf + 50 > textLength) {
-						secondHalf = text.substr(startSecondHalf);
-					} else {
-						secondHalf = text.substr(startSecondHalf, 50);
-					}
-					
-					// This prevents broken words from going into the sentence context box by 
-					// trimming whitespace, trimming non-white space, then trimming white space again.					
-					firstHalf = firstHalf.replace(/^\s+/, '')
-											.replace(/[^\s]+/, '')
-											.replace(/^\s+/, '');
-											
-					secondHalf = secondHalf.replace(/\s+$/, '')
-											.replace(/[^\s]+$/, '')
-											.replace(/\s+$/, '');					
-					
-					contextBox.innerHTML = sc.encodeHTML(firstHalf)+'<span class="word-highlight">'+sc.encodeHTML(currentWord)+'</span>'+sc.encodeHTML(secondHalf);														
+				if (startSecondHalf + 50 > textLength) {
+					secondHalf = text.substr(startSecondHalf);
+				} else {
+					secondHalf = text.substr(startSecondHalf, 50);
 				}
-				return match;
+				
+				// This prevents broken words from going into the sentence context box by 
+				// trimming whitespace, trimming non-white space, then trimming white space again.					
+				firstHalf = firstHalf.replace(/^\s+/, '')
+										.replace(/[^\s]+/, '')
+										.replace(/^\s+/, '');
+										
+				secondHalf = secondHalf.replace(/\s+$/, '')
+										.replace(/[^\s]+$/, '')
+										.replace(/\s+$/, '');					
+				
+				contextBox.innerHTML = sc.encodeHTML(firstHalf)+'<span class="word-highlight">'+sc.encodeHTML(currentWord)+'</span>'+sc.encodeHTML(secondHalf);														
+			}
+			return match;
 			});			
 	},
 
@@ -627,20 +632,39 @@ sc.SpellChecker.prototype = {
 	 * Executes at beginning of spell check if the server reports spelling errors or 
 	 * after resolving the last word and moving to the next.
 	 */		
-	_reviewWord: function(startNew) {	
+	_reviewWord: function() {	
 		var self = this,
-        currentWord = self._wordKeys[0], // The misspelled word currently being reviewed (always the first element of the keys array)
-        regex = new RegExp(currentWord, 'g'); // Use a regular expression to find the misspelled word in the text
-			
+        currentWord = self._wordKeys[0]; // The misspelled word currently being reviewed (always the first element of the keys array)
+        
 		self._currentWord = currentWord;
 		sc._('spell-current'+self._uniqueID).value = currentWord;
 				
 		// Find how many occurrences of the misspelled word so each one is reviewed
-		self._wordMatches = self._text.match(regex).length;
-		
+    self._wordMatches = self._getTotalWordMatches();		
 		self._setSuggestionOptions();
 		self._setContextBox();	
 	},
+  
+  /**
+   * Counts number of occurrences of the misspelled word so each will be reviewed
+  */
+  _getTotalWordMatches: function() {
+    var self = this,
+        regex = new RegExp(self._currentWord, 'g'),
+        wordLength = self._currentWord.length,
+        alphaNum = /^\w+$/,
+        matches = 0;
+    
+    // Only count matches where next character is NOT alphanumeric
+    // Prevents false matches for substring of a word. Ex: 'pre' matching 'previous'
+    self._text.replace(regex, function(match, index) {
+      if (!alphaNum.test(self._text.substr(index + wordLength, 1))) {
+        matches++;
+      } 
+      return match;
+    }); 
+    return matches;
+  },  
 	
 	/**
 	 * Begins spell check process after data has been received from server
@@ -692,7 +716,12 @@ sc.SpellChecker.prototype = {
 		if (text.length < 2) {
 			self._notifyMsg('noerrors');
 			return;
-		}			
+		}
+
+    if (xhr === false) {
+			self._notifyMsg('servererror');
+			return;    
+    }      
 		
 		data = self._settings.name + '='; 
 		data += encodeURIComponent(text);
