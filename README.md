@@ -5,7 +5,7 @@ Word processor style spell check functionality for web applications.
 
 Version 1.3
 
-<strong><a href="http://www.lpology.com/code/spellcheck/">Try a Demo</a></strong>
+Live Demo: http://www.lpology.com/code/spellcheck/
 
 ### Features ###
 * Designed to mimic the appearance and feel of desktop word processor spell checkers.
