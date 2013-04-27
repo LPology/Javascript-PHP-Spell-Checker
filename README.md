@@ -8,16 +8,16 @@ Live Demo: http://www.lpology.com/code/spellcheck/
 ### Overview ###
 Javascript/PHP Spell Checker makes it easy to add an MS Word-style spell checker to any web application with almost no configuration. It's fast, lightweight, and works in all major browsers.  
 
-### Features
+### Features ###
 
 * Designed to mimic the appearance and feel of desktop word processor spell checkers.
 * Provide a list of suggestions for misspelled words.
-* Add spell check to any `<textarea>` or `<div contenteditable="true">
+* Add spell check to any `<textarea>` or `<div contenteditable="true">`
 * Pure Javascript - requires no external libraries. 
 * Fast and lightweight - only 3.2KB minified and gzipped.
 * Tested in IE7+, Firefox 4+, Safari 4+, and Chrome.
 
-### Requirements
+### Requirements ###
 
 + PHP5 with Pspell extension installed
 
