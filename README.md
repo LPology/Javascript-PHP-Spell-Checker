@@ -1,5 +1,7 @@
-Javascript/PHP Spell Checker v. 1.3
+Javascript/PHP Spell Checker
 ============================
+
+Current version: 1.3
 
 Word processor style spell check functionality for web applications.
 
