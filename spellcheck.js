@@ -33,20 +33,20 @@ sc.objectKeys = function(obj) {
  * Converts object to query string
  */ 
 sc.obj2string = function(obj, prefix) {
-    var str = [],
-        prop;
+  var str = [],
+      prop;
 	if (typeof obj !== 'object') {
 		return '';
 	}
-    for (prop in obj) {
-		if (obj.hasOwnProperty(prop)) {
-			var k = prefix ? prefix + "[" + prop + "]" : prop, v = obj[prop];
-			str.push(typeof v === 'object' ? 
-				sc.obj2string(v, k) :
-				encodeURIComponent(k) + '=' + encodeURIComponent(v));
-		}	
-    }
-    return str.join('&');
+  for (prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      var k = prefix ? prefix + "[" + prop + "]" : prop, v = obj[prop];
+      str.push(typeof v === 'object' ? 
+        sc.obj2string(v, k) :
+        encodeURIComponent(k) + '=' + encodeURIComponent(v));
+    }	
+  }
+  return str.join('&');
 };
 
 /**
@@ -118,7 +118,9 @@ sc.newXHR = function() {
 	} else if (window.ActiveXObject) {
 		try {
 			return new window.ActiveXObject('Microsoft.XMLHTTP');
-		} catch (err) {}
+		} catch (err) {
+      return false;
+    }
 	}
 };
 
@@ -129,25 +131,19 @@ sc.encodeHTML = function(str) {
 };
 
 sc.evalJSON = function(data) {
-	var obj = {};
+	var obj;
 	if (!data || typeof data !== 'string') {
-		obj = {success:false};
-		return obj;
+    return false;
 	}
 	data = sc.trim(data);		
 	if (window.JSON && window.JSON.parse) {
-		try {
-			obj = window.JSON.parse(data);
-		}
-		catch (err) {
-			obj = {success:false};
-		}
+    obj = window.JSON.parse(data);
 	} else {
 		try {
 			obj = eval("(" + data + ")");
 		}
 		catch (err) {
-			obj = {success:false};
+			return false;
 		}
 	}
 	return obj;
@@ -160,26 +156,26 @@ sc.evalJSON = function(data) {
  * @return {Element} 
  */
 sc.verifyElem = function(elem) {
-    if (elem.jquery) {
-        elem = elem[0];
-    } else if (typeof elem === 'string') {
-        if (/^#.*/.test(elem)) {				
-            elem = elem.slice(1);                
-        }
-        elem = document.getElementById(elem);
-    }
-    if (!elem || elem.nodeType !== 1) {
-		return false;
-    }
-    if (elem.nodeName.toUpperCase() == 'A') {                      
-        sc.addEvent(elem, 'click', function(e) {
-            if (e && e.preventDefault) {
-                e.preventDefault();
-            } else if (window.event) {
-                window.event.returnValue = false;
-            }
-        });
-    }
+  if (elem.jquery) {
+      elem = elem[0];
+  } else if (typeof elem === 'string') {
+      if (/^#.*/.test(elem)) {				
+          elem = elem.slice(1);                
+      }
+      elem = document.getElementById(elem);
+  }
+  if (!elem || elem.nodeType !== 1) {
+    return false;
+  }
+  if (elem.nodeName.toUpperCase() == 'A') {                      
+      sc.addEvent(elem, 'click', function(e) {
+          if (e && e.preventDefault) {
+              e.preventDefault();
+          } else if (window.event) {
+              window.event.returnValue = false;
+          }
+      });
+  }
 	return elem;
 };
 
