@@ -3,8 +3,6 @@ Javascript/PHP Spell Checker
 
 Word processor style spell check functionality for web applications.
 
-Version 1.3
-
 Live Demo: http://www.lpology.com/code/spellcheck/
 
 ### Features ###
