@@ -18,8 +18,8 @@ Javascript/PHP Spell Checker makes it easy to add an MS Word-style spell checker
 * Tested in IE7+, Firefox 4+, Safari 4+, and Chrome.
 
 ### Requirements ###
-PHP5 with Pspell extension installed
 
+* PHP5 with Pspell extension installed
 
 ### Getting Started ###
 Copy `spellcheck.php` to your web directory. Include `spellcheck.css` and `spellcheck.js` into your page:
