@@ -10,7 +10,7 @@
 var sc = sc || {};
 
 sc._ = function(elem) {
-	return document.getElementById(elem);
+  return document.getElementById(elem);
 };
 
 /**
