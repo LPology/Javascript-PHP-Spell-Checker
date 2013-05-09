@@ -1,6 +1,6 @@
 /**
  * Javascript/PHP Spell Checker
- * Version 1.3 
+ * Version 1.3.1
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012-2013 LPology, LLC  
@@ -131,23 +131,26 @@ sc.encodeHTML = function(str) {
   });
 };
 
-sc.evalJSON = function(data) {
-  var obj;
+/**
+ * Parses a JSON string and returns a Javascript object
+ * Parts borrowed from www.jquery.com
+ */
+ sc.parseJSON = function(data) {
   if (!data || typeof data !== 'string') {
     return false;
-  }
-  data = sc.trim(data);		
+  }		
+  data = sc.trim(data);	
   if (window.JSON && window.JSON.parse) {
     return window.JSON.parse(data);
-  } else {
-    try {
-      obj = eval("(" + data + ")");
+  }	
+  if (data) {
+    if (/^[\],:{}\s]*$/.test( data.replace(/\\(?:["\\\/bfnrt]|u[\da-fA-F]{4})/g, "@" )
+      .replace(/"[^"\\\r\n]*"|true|false|null|-?(?:\d+\.|)\d+(?:[eE][+-]?\d+|)/g, "]" )
+      .replace(/(?:^|:|,)(?:\s*\[)+/g, "")) ) {  
+      return ( new Function( "return " + data ) )();
     }
-    catch (err) {
-      return false;
-    }
-  }
-  return obj;
+  }  
+  return false;
 };
 
 /**
@@ -694,7 +697,7 @@ sc.SpellChecker.prototype = {
   */		
   _handleXHR: function(xhr) {		
     var self = this,
-        json_obj = sc.evalJSON( sc.trim(xhr.responseText) );
+        json_obj = sc.parseJSON( sc.trim(xhr.responseText) );
     
     if (json_obj !== false) {
       self._begin(json_obj);
