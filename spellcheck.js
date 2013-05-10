@@ -211,6 +211,12 @@ sc.SpellChecker = function(options) {
     throw new Error("Invalid text field. Make sure the element you're passing exists."); 
   }	
   
+  self._closeOnEsc = function(event) {
+      if (event.keyCode === 27) {
+        self._closeChecker();
+      }
+    };  
+  
   self._serverURL = self._settings.action;
   self._text = null;
   self._wordObject = null;
@@ -298,7 +304,7 @@ sc.SpellChecker.prototype = {
         currentBox.value = span.firstChild.nodeValue;
       }		
     });		
-    },
+    },    
   
   /**
   * Begins the spell check function.
@@ -315,16 +321,10 @@ sc.SpellChecker.prototype = {
     sc._('spell-overlay'+self._uniqueID).style.display = 'block';
     sc._('spell-modal'+self._uniqueID).style.display = 'block';	
     self._canUndo = false;		
-    self._isOpen = true;	
-            
-    // Close the spell checker if user presses escape key
-    self._esc = function(event) {
-        if (event.keyCode === 27 && self._isOpen === true) {	
-          self._closeChecker();
-        }
-      };
-      
-    sc.addEvent(document, 'keyup', self._esc);			
+    self._isOpen = true;        
+                 
+    // Add listener for escape key to close checker
+    sc.addEvent(document, 'keyup', self._closeOnEsc);			
     self._notifyMsg('checking');
     
     // Send the text to the server
@@ -363,7 +363,7 @@ sc.SpellChecker.prototype = {
     self._isOpen = null;
     
     // Removes listener for escape key
-    sc.removeEvent(document, 'keyup', self._esc);		
+    sc.removeEvent(document, 'keyup', self._closeOnEsc);		
   },
   
   /**
