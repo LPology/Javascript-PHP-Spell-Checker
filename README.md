@@ -14,7 +14,7 @@ Javascript/PHP Spell Checker makes it easy to add an MS Word-style spell checker
 * Provides a list of suggestions for misspelled words.
 * Add spell check to any `<textarea>` or `<div contenteditable="true">`
 * Pure Javascript - requires no external libraries. 
-* Fast and lightweight - only 3.4KB minified and gzipped.
+* Fast and lightweight - less than 4KB minified and gzipped.
 * Tested in IE7+, Firefox 4+, Safari 4+, and Chrome.
 
 ### Requirements ###
