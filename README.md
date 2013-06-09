@@ -34,11 +34,11 @@ Copy `spellcheck.php` to your web directory. Include `spellcheck.css` and `spell
 Initialize the spell checker when the DOM is ready. There are three required parameters:
 
 ```javascript
-var checker = new sc.SpellChecker(
+var checker = new sc.SpellChecker({
 	button: 'spellcheck_button', // HTML element that will open the spell checker when clicked
 	textInput: 'text_box', // HTML field containing the text to spell check
 	action: '/spellcheck.php' // URL of the server side script 
-);
+});
 ```
 
 ```html
