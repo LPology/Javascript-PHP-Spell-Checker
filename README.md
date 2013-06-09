@@ -26,8 +26,8 @@ Copy `spellcheck.php` to your web directory. Include `spellcheck.css` and `spell
 
 ```html
 <head>
-	<link rel="stylesheet" href="spellcheck.css">
-	<script src="spellcheck.js"></script>
+	<link rel="stylesheet" href="spellcheck.min.css">
+	<script src="spellcheck.min.js"></script>
 </head>
 ```
 
@@ -37,7 +37,7 @@ Initialize the spell checker when the DOM is ready. There are three required par
 var checker = new sc.SpellChecker({
 	button: 'spellcheck_button', // HTML element that will open the spell checker when clicked
 	textInput: 'text_box', // HTML field containing the text to spell check
-	action: '/spellcheck.php' // URL of the server side script 
+	action: 'spellcheck.php' // URL of the server side script 
 });
 ```
 
