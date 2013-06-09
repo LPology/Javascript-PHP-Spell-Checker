@@ -22,7 +22,7 @@ Javascript/PHP Spell Checker makes it easy to add an MS Word-style spell checker
 + PHP 5.3+ with Pspell extension installed
 
 ### Getting Started ###
-Copy `spellcheck.php` to your web directory. Include `spellcheck.css` and `spellcheck.js` into your page:
+Copy `spellcheck.php` to your web directory. Include `spellcheck.min.css` and `spellcheck.min.js` into your page:
 
 ```html
 <head>
