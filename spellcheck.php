@@ -27,7 +27,7 @@ $misspelled = array();
 $return = array();
 
 foreach ($words as $w) {
-  if (!pspell_check($pspell, $w)) {
+  if (!pspell_check($pspell, $w) && !is_numeric($w)) {
     $misspelled[] = $w;
   }
 }
