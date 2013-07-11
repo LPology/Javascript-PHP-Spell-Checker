@@ -62,3 +62,5 @@ sudo service httpd restart
 
 ### License ###
 Released under the MIT license.
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/c658e3ccc513c56cc253223a42274cb7 "githalytics.com")](http://githalytics.com/LPology/Javascript-PHP-Spell-Checker)
