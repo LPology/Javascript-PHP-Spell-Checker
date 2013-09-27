@@ -1,30 +1,51 @@
 /**
  * Javascript/PHP Spell Checker
- * Version 1.3.3
+ * Version 1.4
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012-2013 LPology, LLC
  * Released under the MIT license
  */
 
-var sc = sc || {};
+;(function( window, document, undefined ) {
 
-sc._ = function(elem) {
-  return document.getElementById(elem);
+  var sc = window.sc || {},
+
+  // Pre-compile and cache our regular expressions
+  rLWhitespace = /^\s+/,
+  rTWhitespace = /\s+$/,
+  rLNonWhitespace = /[^\s]+/,
+  rRNonWhitespace = /[^\s]+$/,
+  
+  // sc.getUID
+  uidReplace = /[xy]/g,
+  
+  //sc.encodeHTML()
+  rAmp = /&/g,
+  rQuot = /"/g,
+  rQuot2 = /'/g,
+  rLt = /</g,
+  rGt = />/g,
+  
+  rAlphaNum = /^\w+$/,
+  
+  // Holds cached regular expressions for _getRegex()
+  regexCache = {};
+
+sc._ = function( elem ) {
+  return document.getElementById( elem );
 };
 
 /**
  * Accepts an object and returns an array of its property names
  */
-sc.objectKeys = function(obj) {
-  var prop,
-      keys = [];
-  if (typeof obj !== 'object') {
-    return false;
-  }
-  for (prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      keys.push(prop);
+sc.objectKeys = function( obj ) {
+  "use strict";
+  
+  var keys = [];
+  for ( var prop in obj ) {
+    if ( obj.hasOwnProperty( prop ) ) {
+      keys.push( prop );
     }
   }
   return keys;
@@ -33,126 +54,141 @@ sc.objectKeys = function(obj) {
 /**
  * Converts object to query string
  */
-sc.obj2string = function(obj, prefix) {
-  var str = [],
-      prop;
-  if (typeof obj !== 'object') {
-    return '';
-  }
-  for (prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      var k = prefix ? prefix + "[" + prop + "]" : prop, v = obj[prop];
-      str.push(typeof v === 'object' ?
-        sc.obj2string(v, k) :
-        encodeURIComponent(k) + '=' + encodeURIComponent(v));
+sc.obj2string = function( obj, prefix ) {
+  "use strict";
+
+  var str = [];
+  for ( var prop in obj ) {
+    if ( obj.hasOwnProperty( prop ) ) {
+      var k = prefix ? prefix + '[' + prop + ']' : prop, v = obj[prop];
+      str.push( typeof v === 'object' ?
+        sc.obj2string( v, k ) :
+        encodeURIComponent( k ) + '=' + encodeURIComponent( v ) );
     }
   }
-  return str.join('&');
+  return str.join( '&' );
 };
 
 /**
  * Copies all missing properties from second object to first object
  */
-sc.extendObj = function(first, second) {
-  var prop;
-  if (typeof first !== 'object' || typeof second !== 'object') {
-    return false;
-  }
-  for (prop in second) {
-    if (second.hasOwnProperty(prop)) {
+sc.extendObj = function( first, second ) {
+  "use strict";
+
+  for ( var prop in second ) {
+    if ( second.hasOwnProperty( prop ) ) {
       first[prop] = second[prop];
     }
   }
-  return true;
 };
 
-sc.contains = function(a, obj) {
-  var i = a.length;
-  while (i--) {
-    if (a[i] === obj) {
+sc.contains = function( array, item ) {
+  "use strict";
+
+  var i = array.length;
+  while ( i-- ) {
+    if ( array[i] === item ) {
       return true;
     }
   }
   return false;
 };
 
-sc.trim = function(text) {
-  return text.toString().replace(/^\s+/, '').replace( /\s+$/, '');
+sc.trim = function( text ) {
+  "use strict";
+  return text.toString().replace(rLWhitespace, '').replace(rTWhitespace, '');
 };
 
-sc.getId = (function() {
-  var id = 0,
-      time = new Date().getTime();
-  return function(){
-    return time + id++;
-  };
-})();
+/**
+* Generates unique ID
+* Complies with RFC 4122 version 4
+* http://stackoverflow.com/a/2117523/1091949
+*/
+sc.getId = function() {
+  "use strict";
 
-sc.addEvent = function(elem, type, fn) {
-  if (typeof elem === 'string') {
-    elem = document.getElementById(elem);
+  /*jslint bitwise: true*/
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(uidReplace, function(c) {
+      var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+  });
+};
+
+sc.addEvent = function( elem, type, fn ) {
+  "use strict";
+
+  if ( typeof elem === 'string' ) {
+    elem = document.getElementById( elem );
   }
-  if (elem.attachEvent) {
-    elem.attachEvent('on'+type, fn);
+  if ( elem.addEventListener ) {
+    elem.addEventListener( type, fn, false );
   } else {
-    elem.addEventListener(type, fn, false);
+    elem.attachEvent( 'on' + type, fn );
   }
 };
 
 sc.removeEvent = function(elem, type, fn) {
+  "use strict";
+
   if (typeof elem === 'string') {
-    elem = document.getElementById(elem);
+    elem = document.getElementById( elem );
   }
-  if (elem.attachEvent) {
-    elem.detachEvent('on' + type, fn);
+ if ( elem.removeEventListener ) {
+    elem.removeEventListener( type, fn, false );
   } else {
-    elem.removeEventListener(type, fn, false);
+    elem.detachEvent( 'on' + type, fn );
   }
 };
 
 sc.newXHR = function() {
-  if (typeof(XMLHttpRequest) !== undefined) {
+  "use strict";
+
+  if ( typeof XMLHttpRequest !== 'undefined' ) {
     return new window.XMLHttpRequest();
-  } else if (window.ActiveXObject) {
+  } else if ( window.ActiveXObject ) {
     try {
-      return new window.ActiveXObject('Microsoft.XMLHTTP');
-    } catch (err) {
+      return new window.ActiveXObject( 'Microsoft.XMLHTTP' );
+    } catch ( err ) {
       return false;
     }
   }
 };
 
-sc.encodeHTML = function(str) {
-  return String(str)
-           .replace(/&/g, '&amp;')
-           .replace(/"/g, '&quot;')
-           .replace(/'/g, '&#39;')
-           .replace(/</g, '&lt;')
-           .replace(/>/g, '&gt;');
+sc.encodeHTML = function( str ) {
+  "use strict";
+
+  return String( str )
+           .replace( rAmp, '&amp;' )
+           .replace( rQuot, '&quot;' )
+           .replace( rQuot2, '&#39;' )
+           .replace( rLt, '&lt;' )
+           .replace( rGt, '&gt;' );
 };
 
 /**
  * Parses a JSON string and returns a Javascript object
  * Parts borrowed from www.jquery.com
  */
- sc.parseJSON = function(data) {
-  if (!data || typeof data !== 'string') {
+sc.parseJSON = function( data ) {
+   "use strict";
+
+  if ( !data ) {
     return false;
   }
-  data = sc.trim(data);
-  if (window.JSON && window.JSON.parse) {
+  data = sc.trim( data );
+  if ( window.JSON && window.JSON.parse ) {
     try {
-      return window.JSON.parse(data);
-    } catch (err) {
+      return window.JSON.parse( data );
+    } catch ( err ) {
       return false;
     }
   }
-  if (data) {
-    if (/^[\],:{}\s]*$/.test( data.replace(/\\(?:["\\\/bfnrt]|u[\da-fA-F]{4})/g, "@" )
-      .replace(/"[^"\\\r\n]*"|true|false|null|-?(?:\d+\.|)\d+(?:[eE][+-]?\d+|)/g, "]" )
-      .replace(/(?:^|:|,)(?:\s*\[)+/g, "")) ) {
-      return ( new Function( "return " + data ) )();
-    }
+  if ( data ) {
+      if (/^[\],:{}\s]*$/.test( data.replace(/\\(?:["\\\/bfnrt]|u[\da-fA-F]{4})/g, "@" )
+        .replace(/"[^"\\\r\n]*"|true|false|null|-?(?:\d+\.|)\d+(?:[eE][+-]?\d+|)/g, "]" )
+        .replace(/(?:^|:|,)(?:\s*\[)+/g, "")) ) {
+        return ( new Function( "return " + data ) )();
+      }
   }
   return false;
 };
@@ -163,27 +199,34 @@ sc.encodeHTML = function(str) {
  * @param {Mixed} elem
  * @return {Element}
  */
-sc.verifyElem = function(elem) {
-  if (typeof jQuery !== 'undefined' && elem instanceof jQuery) {
-      elem = elem[0];
-  } else if (typeof elem === 'string') {
-      if (/^#.*/.test(elem)) {
-          elem = elem.slice(1);
-      }
-      elem = document.getElementById(elem);
+sc.verifyElem = function( elem ) {
+  "use strict";
+
+  if ( typeof jQuery !== 'undefined' && elem instanceof jQuery ) {
+    elem = elem[0];
+
+  } else if ( typeof elem === 'string' ) {
+    if ( elem.charAt( 0 ) == '#' ) {
+      elem = elem.substr( 1 );
+    }
+    elem = document.getElementById( elem );
   }
-  if (!elem || elem.nodeType !== 1) {
+
+  if ( !elem || elem.nodeType !== 1 ) {
     return false;
   }
-  if (elem.nodeName.toUpperCase() == 'A') {
-      sc.addEvent(elem, 'click', function(e) {
-          if (e && e.preventDefault) {
-              e.preventDefault();
-          } else if (window.event) {
-              window.event.returnValue = false;
-          }
-      });
+
+  if ( elem.nodeName.toUpperCase() == 'A' ) {
+    elem.style.cursor = 'pointer';
+    sc.addEvent( elem, 'click', function( e ) {
+        if ( e && e.preventDefault ) {
+          e.preventDefault();
+        } else if ( window.event ) {
+          window.event.returnValue = false;
+        }
+    });
   }
+
   return elem;
 };
 
@@ -191,11 +234,11 @@ sc.verifyElem = function(elem) {
 * @constructor
 * @param {Object} options
 */
-sc.SpellChecker = function(options) {
+sc.SpellChecker = function( options ) {
 
   var self = this;
 
-  self._settings = {
+  this._settings = {
     action: '',       // URL of server script
     button: '',       // Button that opens spell checker
     textInput: '',    // Text input to spell check
@@ -203,16 +246,17 @@ sc.SpellChecker = function(options) {
     data: {}          // Additional data to send to the server (optional)
   };
 
-  sc.extendObj(this._settings, options);
+  sc.extendObj( this._settings, options );
 
-  this._button = sc.verifyElem(this._settings.button);
-  this._textInput = sc.verifyElem(this._settings.textInput);
+  this._button = sc.verifyElem( this._settings.button );
+  this._textInput = sc.verifyElem( this._settings.textInput );
 
-  if (this._button === false) {
-    throw new Error("Invalid button. Make sure the element you're passing exists.");
+  if ( this._button === false ) {
+    throw new Error( "Invalid button. Make sure the element you're passing exists." );
   }
-  if (this._textInput === false) {
-    throw new Error("Invalid text field. Make sure the element you're passing exists.");
+  
+  if ( this._textInput === false ) {
+    throw new Error( "Invalid text field. Make sure the element you're passing exists." );
   }
 
   this._closeOnEsc = function(event) {
@@ -221,62 +265,57 @@ sc.SpellChecker = function(options) {
       }
     };
 
-  this._serverURL = self._settings.action;
-  this._text = null;
-  this._wordObject = null;
-  this._wordKeys = null;
-  this._currentWord = null;
-  this._wordMatches = null;
-  this._matchOffset = null;
-  this._canUndo = null;
-  this._undoPrevious = null;
-  this._previousWordMatches = null;
-  this._previousMatchOffset = null;
-  this._uniqueID = null;
-  this._isOpen = null;
   this.enable();
 };
 
 sc.SpellChecker.prototype = {
 
   enable: function() {
+    "use strict";
+  
     var self = this,
         currentBox,
         contextBox;
 
-    self._isOpen = false;
-    self._uniqueID = sc.getId();
-    self._createHTML();
+    this._isOpen = false;
+    this._uId = sc.getId();
+    this._createHTML();
 
-    currentBox = sc._('spell-current'+self._uniqueID);
-    contextBox = sc._('spell-context'+self._uniqueID);
+    currentBox = sc._( 'spell-current'+this._uId );
+    contextBox = sc._( 'spell-context'+this._uId );
 
-    self._button.className += ' spellcheck-trigger';
+    this._button.className += ' spellcheck-trigger';
 
-    sc.addEvent(self._button, 'click', function() {
+    sc.addEvent( this._button, 'click', function() {
       self._openChecker();
     });
-    sc.addEvent('spelling-ignore'+self._uniqueID, 'click', function() {
+    
+    sc.addEvent( 'spelling-ignore'+this._uId, 'click', function() {
       self._ignoreChange();
     });
-    sc.addEvent('spelling-ignore-all'+self._uniqueID, 'click', function() {
+    
+    sc.addEvent( 'spelling-ignore-all'+this._uId, 'click', function() {
       self._ignoreChange(true);
     });
-    sc.addEvent('spell-change'+self._uniqueID, 'click', function() {
+    
+    sc.addEvent( 'spell-change'+this._uId, 'click', function() {
       self._makeChange();
     });
-    sc.addEvent('spell-change-all'+self._uniqueID, 'click', function() {
+    
+    sc.addEvent( 'spell-change-all'+this._uId, 'click', function() {
       self._makeChange(true);
     });
-    sc.addEvent('spell-close'+self._uniqueID, 'click', function() {
+    
+    sc.addEvent( 'spell-close'+this._uId, 'click', function() {
       self._closeChecker();
     });
-    sc.addEvent('spell-msg-close'+self._uniqueID, 'click', function() {
+    
+    sc.addEvent( 'spell-msg-close'+this._uId, 'click', function() {
       self._closeChecker();
     });
 
-    sc.addEvent('spell-undo'+self._uniqueID, 'click', function() {
-      if (self._canUndo === false) {
+    sc.addEvent( 'spell-undo'+this._uId, 'click', function() {
+      if ( self._canUndo === false ) {
         return;
       }
       self._undoChange();
@@ -284,49 +323,60 @@ sc.SpellChecker.prototype = {
 
     // Unselect any suggestion if user clicks either input so that word is
     // changed to correct spelling
-    sc.addEvent(currentBox, 'click', function() {
-      sc._('spelling-suggestions'+self._uniqueID).selectedIndex = -1;
+    sc.addEvent( currentBox, 'click', function() {
+      sc._( 'spelling-suggestions'+self._uId ).selectedIndex = -1;
     });
-    sc.addEvent(contextBox, 'click', function() {
-      sc._('spelling-suggestions'+self._uniqueID).selectedIndex = -1;
+    
+    sc.addEvent( contextBox, 'click', function() {
+      sc._( 'spelling-suggestions'+self._uId ).selectedIndex = -1;
     });
 
     // Change "Not found in dictionary" if user edits within word context box
-    sc.addEvent(currentBox, 'keyup', function() {
-      var that = this,
-        span = contextBox.getElementsByTagName('span')[0];
-      if (span && span.firstChild) {
-        span.firstChild.nodeValue = that.value;
+    sc.addEvent( currentBox, 'keyup', function() {
+      var span = contextBox.getElementsByTagName( 'span' )[0];
+      if ( span && span.firstChild ) {
+        span.firstChild.nodeValue = this.value;
       }
-    });
+    } );
+    
     // Change word context also if user edits "Not found in dictionary" box
-    sc.addEvent(contextBox, 'keyup', function() {
-      var that = this,
-        span = that.getElementsByTagName('span')[0];
-      if (span && span.firstChild) {
+    sc.addEvent( contextBox, 'keyup', function() {
+      var span = this.getElementsByTagName( 'span' )[0];
+      if ( span && span.firstChild ) {
         currentBox.value = span.firstChild.nodeValue;
       }
-    });
-    },
+    } );
+  },
+  
+  _getRegex: function( word ) {
+    "use strict";
+  
+    if ( !regexCache[word] ) {
+      regexCache[word] = new RegExp( word, 'g' );
+    } 
+    return regexCache[word];
+  },
 
   /**
   * Begins the spell check function.
   */
   _openChecker: function() {
-    if (this._isOpen === true) {
+    "use strict";
+  
+    if ( this._isOpen === true ) {
       return;
     }
 
     this._text = this._textInput.value;
-    sc._('spell-undo'+this._uniqueID).setAttribute('disabled', true);
-    sc._('spell-overlay'+this._uniqueID).style.display = 'block';
-    sc._('spell-modal'+this._uniqueID).style.display = 'block';
+    sc._( 'spell-undo'+this._uId ).disabled = true;
+    sc._( 'spell-overlay'+this._uId ).style.display = 'block';
+    sc._( 'spell-modal'+this._uId ).style.display = 'block';
     this._canUndo = false;
     this._isOpen = true;
 
     // Add listener for escape key to close checker
-    sc.addEvent(document, 'keyup', this._closeOnEsc);
-    this._notifyMsg('a');
+    sc.addEvent( document, 'keyup', this._closeOnEsc );
+    this._notifyMsg( 'a' );
 
     // Send the text to the server
     this._sendData();
@@ -336,17 +386,19 @@ sc.SpellChecker.prototype = {
   * Closes the spell check box and cleans up.
   */
   _closeChecker: function() {
-    if (this._isOpen !== true) {
+    "use strict";
+  
+    if ( this._isOpen !== true ) {
       return;
     }
 
     // Close all dialog boxes
-    sc._('spell-msg'+this._uniqueID).style.display = 'none';
-    sc._('spell-modal'+this._uniqueID).style.cssText = 'z-index:4999; display:none;';
-    sc._('spell-overlay'+this._uniqueID).style.display = 'none';
-    sc._('spell-current'+this._uniqueID).value = '';
-    sc._('spell-context'+this._uniqueID).innerHTML = '';
-    sc._('spelling-suggestions'+this._uniqueID).options.length = 0;
+    sc._( 'spell-msg'+this._uId ).style.display = 'none';
+    sc._( 'spell-modal'+this._uId ).style.cssText = 'z-index:4999; display:none;';
+    sc._( 'spell-overlay'+this._uId ).style.display = 'none';
+    sc._( 'spell-current'+this._uId ).value = '';
+    sc._( 'spell-context'+this._uId ).innerHTML = '';
+    sc._( 'spelling-suggestions'+this._uId ).options.length = 0;
 
     // Reset everything after finishing
     this._text = null;
@@ -362,57 +414,65 @@ sc.SpellChecker.prototype = {
     this._isOpen = null;
 
     // Removes listener for escape key
-    sc.removeEvent(document, 'keyup', this._closeOnEsc);
+    sc.removeEvent( document, 'keyup', this._closeOnEsc );
   },
 
   /**
   * Opens the review box to resolve a word.
   */
   _showReviewer: function() {
-    sc._('spell-msg'+this._uniqueID).style.display = 'none';
-    sc._('spell-modal'+this._uniqueID).style.zIndex = 5001;
+    "use strict";
+  
+    sc._( 'spell-msg'+this._uId ).style.display = 'none';
+    sc._( 'spell-modal'+this._uId ).style.zIndex = 5001;
   },
 
   /**
   * Provides user with status messages.
   */
-  _notifyMsg: function(type) {
+  _notifyMsg: function( type ) {
+    "use strict";
+  
     var msg,
-        closeBox = sc._('spell-msg-close-box'+this._uniqueID);
+        closeBox = sc._( 'spell-msg-close-box'+this._uId );
 
-    if (type == 'a') {
+    if ( type == 'a' ) {
       msg = 'Checking...';
       closeBox.style.display = 'none';
     } else {
       closeBox.style.display = 'block';
     }
 
-    if (type == 'b') {
+    if ( type == 'b' ) {
       msg = 'We have experienced an error and cannot complete the spell check.';
     }
-    if (type == 'c') {
+    if ( type == 'c' ) {
       msg = 'Spell check completed. No errors found.';
     }
-    if (type == 'd') {
+    if ( type == 'd' ) {
       msg = 'Spell check completed';
     }
 
-    sc._('spell-modal'+this._uniqueID).style.zIndex = 4999;
-    sc._('spell-msg-text'+this._uniqueID).innerHTML = msg;
-    sc._('spell-msg'+this._uniqueID).style.display = 'block';
+    sc._( 'spell-modal'+this._uId ).style.zIndex = 4999;
+    sc._( 'spell-msg-text'+this._uId ).innerHTML = msg;
+    sc._( 'spell-msg'+this._uId ).style.display = 'block';
   },
-
 
   /**
   * Ignores the potentially misspelled word currently in review
   */
-  _ignoreChange: function(ignoreAll) {
+  _ignoreChange: function( ignoreAll ) {
+    "use strict";
+  
     var wordMatches = this._wordMatches,
         matchOffset = this._matchOffset,
         moreMatches;
 
-    if (ignoreAll === true || wordMatches <= 1 || matchOffset === wordMatches) {
-      this._wordKeys.splice(0, 1);
+    if ( ignoreAll === true || 
+         wordMatches <= 1 || 
+         matchOffset === wordMatches )
+    {
+      this._wordKeys.splice( 0, 1 );
       this._matchOffset = 1; // Reset to 1 in case there is another word to review
       moreMatches = false;
     } else {
@@ -423,60 +483,65 @@ sc.SpellChecker.prototype = {
     }
 
     // Disable "Undo" in case the prior action was a change
-    sc._('spell-undo'+this._uniqueID).setAttribute('disabled', true);
+    sc._( 'spell-undo'+this._uId ).disabled = true;
     this._canUndo = false;
 
-    if (this._wordKeys.length > 0 || moreMatches === true) {
+    if ( this._wordKeys.length > 0 || moreMatches === true ) {
       // Continue editing if that wasn't the last word
       this._reviewWord();
     } else {
-      this._notifyMsg('d');
+      this._notifyMsg( 'd' );
     }
   },
 
   /**
   * Changes the misspelled word currently in review
   */
-  _makeChange: function(changeAll) {
+  _makeChange: function( changeAll ) {
+    "use strict";
+  
     var text = this._text,
         currentWord = this._currentWord,
         wordMatches = this._wordMatches,
         matchOffset = this._matchOffset,
-        select = sc._('spelling-suggestions'+this._uniqueID),
+        select = sc._( 'spelling-suggestions'+this._uId ),
+        regex = this._getRegex( currentWord ),        
         selected_option = select.selectedIndex,
-        regex = new RegExp(currentWord, 'g'),
         m = 0,
         new_word,
         new_text,
-        moreMatches;
+        moreMatches;  
 
     // Save backup copy of text and current state of variables for restoration on "Undo"
-    sc._('spell-hidden'+this._uniqueID).value = text;
+    sc._( 'spell-hidden'+this._uId ).value = text;
     this._undoPrevious = currentWord;
     this._previousWordMatches = wordMatches;
     this._previousMatchOffset = matchOffset;
 
     // Enable the "Undo" button
-    sc._('spell-undo'+this._uniqueID).removeAttribute('disabled');
+    sc._( 'spell-undo'+this._uId ).disabled = false;
     this._canUndo = true;
 
-    if (selected_option > -1) {
+    if ( selected_option > -1 ) {
       new_word = select.options[selected_option].text; // Use suggestion if one is selected
     } else {
-      new_word = sc._('spell-current'+this._uniqueID).value;
+      new_word = sc._( 'spell-current'+this._uId ).value;
     }
 
-    new_text = text.replace(regex, function(match) {
+    new_text = text.replace( regex, function( match ) {
       m++;
-      if (changeAll === true || matchOffset === m) {
+      if ( changeAll === true || matchOffset === m ) {
         return new_word;
       }
       return match;
-    });
+    } );
 
     // Only remove the replaced word if we won't need it again
-    if (changeAll === true || wordMatches <= 1 || matchOffset === wordMatches) {
-      this._wordKeys.splice(0, 1);
+    if ( changeAll === true ||
+         wordMatches <= 1 || 
+         matchOffset === wordMatches )
+    {
+      this._wordKeys.splice( 0, 1 );
       this._matchOffset = 1; // Reset to 1 in case there is another word to review
       moreMatches = false; // No remaining duplicates of this word
     } else {
@@ -486,10 +551,10 @@ sc.SpellChecker.prototype = {
     this._textInput.value = new_text;
     this._text = new_text;
 
-    if (this._wordKeys.length > 0 || moreMatches === true) {
+    if ( this._wordKeys.length > 0 || moreMatches === true ) {
       this._reviewWord();
     } else {
-      this._notifyMsg('d');
+      this._notifyMsg( 'd' );
     }
   },
 
@@ -497,8 +562,10 @@ sc.SpellChecker.prototype = {
   * Undo the previous change action
   */
   _undoChange: function() {
+    "use strict";
+  
     var previousWord = this._undoPrevious,
-        backupTextarea = sc._('spell-hidden'+this._uniqueID),
+        backupTextarea = sc._( 'spell-hidden'+this._uId ),
         previousText = backupTextarea.value;
 
     // Restore user text to pre-change state
@@ -508,14 +575,14 @@ sc.SpellChecker.prototype = {
     this._text = previousText;
 
     // Return previous word to the "Not found in dictionary" field
-    sc._('spell-current'+this._uniqueID).value = previousWord;
+    sc._( 'spell-current'+this._uId ).value = previousWord;
 
     // Restore currentWord to value prior to change
     this._currentWord = previousWord;
 
     // Add previous word back to beginning of array	if it was removed
-    if (!sc.contains(this._wordKeys, previousWord)) {
-      this._wordKeys.unshift(previousWord);
+    if ( !sc.contains( this._wordKeys, previousWord ) ) {
+      this._wordKeys.unshift( previousWord );
     }
 
     // Restore variables to their value prior to change
@@ -526,7 +593,7 @@ sc.SpellChecker.prototype = {
     this._canUndo = false;
 
     // Disable the "Undo" button
-    sc._('spell-undo'+this._uniqueID).setAttribute('disabled', true);
+    sc._( 'spell-undo'+this._uId ).disabled = true;
 
     // Empty the backup text area
     backupTextarea.value = '';
@@ -542,9 +609,11 @@ sc.SpellChecker.prototype = {
   * Populates the spelling suggestions select box with options
   */
   _setSuggestionOptions: function() {
+    "use strict";
+  
     var wordObject = this._wordObject,
         word = this._currentWord,
-        select_field = sc._('spelling-suggestions'+this._uniqueID),
+        select_field = sc._( 'spelling-suggestions'+this._uId ),
         suggestions = wordObject[word],
         num = suggestions.length,
         i;
@@ -552,12 +621,12 @@ sc.SpellChecker.prototype = {
     select_field.options.length = 0;
 
     // Return if there are no suggestions
-    if (num < 1) {
+    if ( num < 1 ) {
       return;
     }
 
-    for (i = 0; i < num; i++) {
-      select_field.options[i] = new Option(suggestions[i], suggestions[i]);
+    for ( i = 0; i < num; i++ ) {
+      select_field.options[i] = new Option( suggestions[i], suggestions[i] );
     }
 
     select_field.selectedIndex = 0;
@@ -567,63 +636,63 @@ sc.SpellChecker.prototype = {
   * Places the misspelled word in the review box along with surrounding words for context
   */
   _setContextBox: function() {
-    var self = this,
-        currentWord = self._currentWord,
+    "use strict";
+  
+    var currentWord = this._currentWord,
         wordLength = currentWord.length,
-        matchOffset = self._matchOffset,
-        text = self._text,
+        matchOffset = this._matchOffset,
+        regex = this._getRegex( currentWord ),
+        text = this._text,
         textLength = text.length,
-        contextBox = sc._('spell-context'+self._uniqueID),
-        regex = new RegExp(currentWord, 'g'),
-        alphaNum = /^\w+$/,
-        i = 0;
+        contextBox = sc._( 'spell-context'+this._uId ),
+        i = 0;      
 
-    text.replace(regex, function(match, index) {
+    text.replace( regex, function( match, index ) {
       // Prevents false matches for substring of a word. Ex: 'pre' matching 'previous'
       // Text is split by alphanumeric chars, so if the next char is alphanumeric, it's a false match
-      if (alphaNum.test(text.substr(index + wordLength, 1))) {
+      if ( rAlphaNum.test( text.substr( index + wordLength, 1 ) ) ) {
         return match;
       }
 
       i++;
 
-      if (i === matchOffset) {
+      if ( i === matchOffset ) {
         var firstHalf,
             secondHalf,
             startFirstHalf = index - 20,
             startSecondHalf = index + wordLength;
 
-        if (startFirstHalf < 0) {
-          firstHalf = text.substr(0, index);
+        if ( startFirstHalf < 0 ) {
+          firstHalf = text.substr( 0, index );
         } else {
-          firstHalf = text.substr(startFirstHalf, 20);
+          firstHalf = text.substr( startFirstHalf, 20 );
         }
 
-        if (startSecondHalf + 50 > textLength) {
-          secondHalf = text.substr(startSecondHalf);
+        if ( startSecondHalf + 50 > textLength ) {
+          secondHalf = text.substr( startSecondHalf );
         } else {
-          secondHalf = text.substr(startSecondHalf, 50);
+          secondHalf = text.substr( startSecondHalf, 50 );
         }
 
         // This prevents broken words from going into the sentence context box by
         // trimming whitespace, trimming non-white space, then trimming white space again.
-        firstHalf = firstHalf.replace(/^\s+/, '')
-                          .replace(/[^\s]+/, '')
-                          .replace(/^\s+/, '');
+        firstHalf = firstHalf.replace( rLWhitespace, '' )
+                          .replace( rLNonWhitespace, '' )
+                          .replace( rLWhitespace, '' );
 
-        secondHalf = secondHalf.replace(/\s+$/, '')
-                          .replace(/[^\s]+$/, '')
-                          .replace(/\s+$/, '');
+        secondHalf = secondHalf.replace( rTWhitespace, '' )
+                          .replace( rRNonWhitespace, '' )
+                          .replace( rTWhitespace, '' );
 
-        contextBox.innerHTML = sc.encodeHTML(firstHalf)+
+        contextBox.innerHTML = sc.encodeHTML( firstHalf )+
             '<span class="word-highlight">'+
-            sc.encodeHTML(currentWord)+
+            sc.encodeHTML( currentWord )+
             '</span>'+
-            sc.encodeHTML(secondHalf);
+            sc.encodeHTML( secondHalf );
       }
       
       return match;
-    });
+    } );
   },
 
   /**
@@ -633,10 +702,12 @@ sc.SpellChecker.prototype = {
   * after resolving the last word and moving to the next.
   */
   _reviewWord: function() {
+    "use strict";
+  
     var currentWord = this._wordKeys[0]; // The misspelled word currently being reviewed (always the first element of the keys array)
 
     this._currentWord = currentWord;
-    sc._('spell-current'+this._uniqueID).value = currentWord;
+    sc._( 'spell-current'+this._uId ).value = currentWord;
 
     // Find how many occurrences of the misspelled word so each one is reviewed
     this._wordMatches = this._getTotalWordMatches();
@@ -648,41 +719,44 @@ sc.SpellChecker.prototype = {
   * Counts number of occurrences of the misspelled word so each will be reviewed
   */
   _getTotalWordMatches: function() {
-    var self = this,
-        regex = new RegExp(this._currentWord, 'g'),
+    "use strict";
+  
+    var regex = this._getRegex( this._currentWord ),  
         wordLength = this._currentWord.length,
-        alphaNum = /^\w+$/,
-        matches = 0;
+        matches = 0,
+        text = this._text;
 
     // Only count matches where next character is NOT alphanumeric
     // Prevents false matches for substring of a word. Ex: 'pre' matching 'previous'
-    self._text.replace(regex, function(match, index) {
-      if (!alphaNum.test(self._text.substr(index + wordLength, 1))) {
+    this._text.replace( regex, function( match, index ) {
+      if ( !rAlphaNum.test( text.substr( index + wordLength, 1 ) ) ) {
         matches++;
       }
       return match;
-    });
+    } );
     return matches;
   },
 
   /**
   * Begins spell check process after data has been received from server
   */
-  _begin: function(response) {
-    if (response.success && response.success === true) {
+  _begin: function( response ) {
+    "use strict";
+  
+    if ( response.success && response.success === true ) {
       // Open the review box if there were spelling errors found
-      if (response.errors && response.errors === true) {
+      if ( response.errors && response.errors === true ) {
         // Save a copy of the current text to hidden textarea for restore on "Undo"
-        sc._('spell-hidden'+this._uniqueID).value = this._text;
+        sc._( 'spell-hidden'+this._uId ).value = this._text;
         this._canUndo = false;
         this._wordObject = response.words;
-        this._wordKeys = sc.objectKeys(this._wordObject);
+        this._wordKeys = sc.objectKeys( this._wordObject );
         this._matchOffset = 1;
         this._showReviewer();
         this._reviewWord();
       } else {
         // No spelling errors were found
-        this._notifyMsg('c');
+        this._notifyMsg( 'c' );
       }
     }
   },
@@ -690,13 +764,15 @@ sc.SpellChecker.prototype = {
   /**
   * Handles successful XHR responses
   */
-  _handleXHR: function(xhr) {
-    var json_obj = sc.parseJSON( sc.trim(xhr.responseText) );
-
-    if (json_obj !== false) {
-      this._begin(json_obj);
+  _handleXHR: function( response ) {
+    "use strict";
+  
+    var json_obj = sc.parseJSON( response );
+    
+    if ( json_obj !== false ) {
+      this._begin( json_obj );
     } else {
-      this._notifyMsg('b');
+      this._notifyMsg( 'b' );
     }
   },
 
@@ -704,70 +780,75 @@ sc.SpellChecker.prototype = {
   * Sends text to the server for spell review
   */
   _sendData: function() {
+    "use strict";
+  
     var self = this,
         xhr = sc.newXHR(),
-        text = self._text,
         data;
 
-    if (xhr === false) {
-      self._notifyMsg('b');
+    if ( xhr === false ) {
+      this._notifyMsg( 'b' );
       return;
     }
 
     // Don't waste a server request for less than 2 characters
-    if (text.length < 2) {
-      self._notifyMsg('c');
+    if ( this._text.length < 2 ) {
+      this._notifyMsg( 'c' );
       return;
     }
 
-    data = self._settings.name + '=';
-    data += encodeURIComponent(text);
+    data = this._settings.name + '=';
+    data += encodeURIComponent( this._text );
     data += '&';
-    data += sc.obj2string(self._settings.data);
+    data += sc.obj2string( this._settings.data );
 
     xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            self._handleXHR(xhr);
+        if ( this.readyState === 4 ) {
+          if ( this.status >= 200 && this.status < 300 ) {
+            self._handleXHR( this.responseText );
           } else {
-            self._notifyMsg('b');
+            self._notifyMsg( 'b' );
           }
         }
       };
 
-    xhr.open('POST', self._serverURL, true);
-    xhr.setRequestHeader('Accept', 'application/json, text/javascript, */*; q=0.01');
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send(data);
+    xhr.open( 'POST', this._settings.action, true );
+    xhr.setRequestHeader( 'Accept', 'application/json, text/javascript, */*; q=0.01' );
+    xhr.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
+    xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+    xhr.send( data );
+    xhr = null;
   },
 
   /**
   * Creates HTML for spell checker
   */
   _createHTML: function() {
-    var self = this,
-        overlay = document.createElement('div'),
-        modal = document.createElement('div'),
-        msgBox = document.createElement('div'),
-        hidden = document.createElement('textarea');
+    var overlay = document.createElement( 'div' ),
+        modal = document.createElement( 'div' ),
+        msgBox = document.createElement( 'div' ),
+        hidden = document.createElement( 'textarea' );
 
-    document.body.appendChild(overlay);
+    document.body.appendChild( overlay );
     overlay.className = 'spell-check-overlay';
-    overlay.setAttribute('id', 'spell-overlay'+self._uniqueID);
+    overlay.id = 'spell-overlay'+this._uId;
 
-    document.body.appendChild(modal);
+    document.body.appendChild( modal );
     modal.className = 'spell-wrap';
-    modal.setAttribute('id', 'spell-modal'+self._uniqueID);
-    modal.innerHTML = '<div class="spell-header">Spell Check</div><div id="spelling-inner'+self._uniqueID+'" class="spelling-inner"><div class="clearleft">Not found in dictionary:</div><div class="spell-nf"><input type="text" class="current" id="spell-current'+self._uniqueID+'" /><div class="context" contenteditable="true" id="spell-context'+self._uniqueID+'"></div></div><div class="spell-ignorebtns"><button id="spelling-ignore'+self._uniqueID+'" type="button">Ignore</button><button id="spelling-ignore-all'+self._uniqueID+'" type="button">Ignore All</button></div><div class="clearleft top5">Suggestions:</div><div class="spell-suggest"><select size="8" id="spelling-suggestions'+self._uniqueID+'"><option></option></select></div><div class="spell-changebtns"><button type="button" id="spell-change'+self._uniqueID+'">Change</button><button id="spell-change-all'+self._uniqueID+'">Change All</button><button type="button" id="spell-undo'+self._uniqueID+'">Undo</button></div><hr /><div class="close-box"><button type="button" id="spell-close'+self._uniqueID+'">Close</button></div></div>';
+    modal.id = 'spell-modal'+this._uId;
+    modal.innerHTML = '<div class="spell-header">Spell Check</div><div id="spelling-inner'+this._uId+'" class="spelling-inner"><div class="clearleft">Not found in dictionary:</div><div class="spell-nf"><input type="text" class="current" id="spell-current'+this._uId+'" /><div class="context" contenteditable="true" id="spell-context'+this._uId+'"></div></div><div class="spell-ignorebtns"><button id="spelling-ignore'+this._uId+'" type="button">Ignore</button><button id="spelling-ignore-all'+this._uId+'" type="button">Ignore All</button></div><div class="clearleft">Suggestions:</div><div class="spell-suggest"><select size="8" id="spelling-suggestions'+this._uId+'"><option></option></select></div><div class="spell-changebtns"><button type="button" id="spell-change'+this._uId+'">Change</button><button id="spell-change-all'+this._uId+'">Change All</button><button type="button" id="spell-undo'+this._uId+'">Undo</button></div><hr /><div class="close-box"><button type="button" id="spell-close'+this._uId+'">Close</button></div></div>';
 
-    document.body.appendChild(msgBox);
+    document.body.appendChild( msgBox );
     msgBox.className = 'spell-msg';
-    msgBox.setAttribute('id', 'spell-msg'+self._uniqueID);
-    msgBox.innerHTML = '<div class="spell-header">Spell Check</div><div class="spell-msg-inner"><span id="spell-msg-text'+self._uniqueID+'"></span></div><div class="spell-msg-inner" id="spell-msg-close-box'+self._uniqueID+'"><button id="spell-msg-close'+self._uniqueID+'">OK</button></div>';
+    msgBox.id = 'spell-msg'+this._uId;
+    msgBox.innerHTML = '<div class="spell-header">Spell Check</div><div class="spell-msg-inner"><span id="spell-msg-text'+this._uId+'"></span></div><div class="spell-msg-inner" id="spell-msg-close-box'+this._uId+'"><button id="spell-msg-close'+this._uId+'">OK</button></div>';
 
-    document.body.appendChild(hidden);
+    document.body.appendChild( hidden );
     hidden.style.display = 'none';
-    hidden.setAttribute('id', 'spell-hidden'+self._uniqueID);
+    hidden.id = 'spell-hidden'+this._uId;
   }
 };
+
+window.sc = sc;
+
+})( window, document );
