@@ -12,14 +12,14 @@
 .spellcheck-trigger:hover{
   cursor:pointer;
 }
-div.spell-wrap button,div.spell-wrap input[type="button"],div.spell-wrap input,div.spell-wrap input[type="text"]{
+div.spell-wrap button,div.spell-wrap input[type="button"],div.spell-wrap input,div.spell-wrap input[type="text"],div.spell-wrap select{
   zoom:1;
   margin:0;
-  font-size:inherit;
   vertical-align:middle;
   display:inline-block;
   *display:inline;
   line-height:inherit;
+  font-size:inherit;  
   font-family:inherit;
   font-weight:inherit;
 }
