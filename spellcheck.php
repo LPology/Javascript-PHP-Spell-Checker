@@ -22,7 +22,7 @@ if (!$pspell = pspell_new('en', '', '', '', PSPELL_FAST)) {
   exit(json_encode(array('success' => false)));
 }
 
-$words = preg_split('/[\W]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+$words = preg_split('/[\W]+/u', $text, -1, PREG_SPLIT_NO_EMPTY);
 $misspelled = array();
 $return = array();
 
