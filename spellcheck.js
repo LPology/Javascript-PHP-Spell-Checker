@@ -434,7 +434,7 @@ sc.SpellChecker.prototype = {
     }
 
     // Remove .spellcheck-trigger CSS class from button
-    this._button.className = this._button.className.replace( new RegExp('(?:^|\\s)spellcheck-trigger(?!\\S)'), '' );
+    this._button.className = this._button.className.replace( /(?:^|\s)spellcheck-trigger(?!\S)/ , '' );
 
     // Remove all the HTML we created
     sc.remove( sc._( 'spell-msg' + this._uId ) );
