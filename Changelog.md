@@ -1,5 +1,14 @@
 Change Log 
 ============================
+### Version 1.5.1 ###
+spellcheck.js:
+* Added `debug` option to view progress messages and server response in the console
+* Switched to a better method of handling server responses -- more reliable, improved error handling
+* XHR responses are now only handled if the spell checker is open -- closing before a request is completed effectively abandons the request
+
+spellcheck.css:
+* Added 1px #AAA border to spell check box
+
 ### Version 1.5 ###
 spellcheck.js:
 * Added `onOpen()` and `onClose()` callback methods

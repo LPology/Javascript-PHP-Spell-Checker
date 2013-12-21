@@ -1,6 +1,6 @@
 /**
  * Javascript/PHP Spell Checker
- * Version 1.5
+ * Version 1.5.1
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012-2013 LPology, LLC
@@ -150,6 +150,11 @@ div.spell-wrap {
 
 div.spelling-inner {
   padding: 0 15px 8px;
+}
+
+div.spelling-inner,
+div.spell-msg {
+  border: 1px solid #aaa;
 }
 
 div.spell-wrap input.current {

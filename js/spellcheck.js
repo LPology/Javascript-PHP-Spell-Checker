@@ -1,6 +1,6 @@
 /**
  * Javascript/PHP Spell Checker
- * Version 1.5
+ * Version 1.5.1
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012-2013 LPology, LLC
@@ -210,11 +210,9 @@ sc.newXHR = function() {
   } else if ( window.ActiveXObject ) {
     try {
       return new window.ActiveXObject( 'Microsoft.XMLHTTP' );
-    } catch ( err ) {
+    } catch ( e ) {
       return false;
     }
-  } else {
-    return false;
   }
 };
 
@@ -308,6 +306,7 @@ sc.SpellChecker = function( options ) {
     textInput: '',                          // Text input to spell check
     name: 'text',                           // Parameter name of text sent to server
     data: {},                               // Additional data to send to the server (optional)
+    debug: false,
     onOpen: function( button, text ) {},    // Callback to be executed when spell checker is opened
     onClose: function( button, text ) {}    // Callback to be executed after spell checker is closed
   };
@@ -447,6 +446,17 @@ sc.SpellChecker.prototype = {
       if ( this.hasOwnProperty( prop ) ) {
         delete this.prop;
       }
+    }
+  },
+
+  /**
+  * Send data to browser console if debug is set to true
+  */
+  log: function( str ) {
+    "use strict";
+
+    if ( this._settings.debug && window.console ) {
+      console.log( '[spell checker] ' + str );
     }
   },
 
@@ -864,21 +874,6 @@ sc.SpellChecker.prototype = {
   },
 
   /**
-  * Handles successful XHR responses
-  */
-  _handleXHR: function( response ) {
-    "use strict";
-
-    var json = sc.parseJSON( response );
-
-    if ( json !== false ) {
-      this._begin( json );
-    } else {
-      this._notifyMsg( 'b' );
-    }
-  },
-
-  /**
   * Sends text to the server for spell review
   */
   _sendData: function() {
@@ -886,12 +881,8 @@ sc.SpellChecker.prototype = {
 
     var self = this,
         xhr = sc.newXHR(),
-        data;
-
-    if ( xhr === false ) {
-      this._notifyMsg( 'b' );
-      return;
-    }
+        data,
+        callback;
 
     // Don't waste a server request for less than 2 characters
     if ( this._text.length < 2 ) {
@@ -908,23 +899,67 @@ sc.SpellChecker.prototype = {
       data += sc.obj2string( this._settings.data );
     }
 
-    xhr.onreadystatechange = function() {
-        if ( this.readyState === 4 ) {
-          if ( this.status >= 200 && this.status < 300 ) {
-            self._settings.onOpen.call( self, self._button, self._text );
-            self._handleXHR( this.responseText );
+    callback = function() {
+      var response,
+          status,
+          statusText;
+
+      try {
+        if ( callback && xhr.readyState === 4 ) {
+          callback = undefined;
+          xhr.onreadystatechange = function() {};
+          
+          // Only continue if the spell checker is open. This way, closing the checker
+          // before the request is completed effectively aborts the request          
+          if ( !self._isOpen ) {
+            return;
+          }
+          
+          status = xhr.status;
+
+          try {
+            statusText = xhr.statusText;
+          } catch( e ) {
+            statusText = '';
+          }
+
+          self.log( 'Request completed. Status: ' + status + ' ' + statusText );
+
+          if ( status >= 200 && status < 300 ) {
+            response = sc.parseJSON( xhr.responseText );
+
+            if ( response !== false ) {
+              self._settings.onOpen.call( self, self._button, self._text );
+              self._begin( response );
+
+              // There was an error parsing the server response
+            } else {
+              self.log( 'Error parsing server response' );
+              self._notifyMsg( 'b' );
+            }
+
+            xhr = response = null;
+
+            // We didn't get a 2xx status
           } else {
             self._notifyMsg( 'b' );
           }
-        }
-      };
 
+        }
+
+      } catch( e ) {
+        self.log( 'Error: ' + e.message );
+        self._notifyMsg( 'b' );
+      }
+    };
+
+    xhr.onreadystatechange = callback;
     xhr.open( 'POST', this._settings.action, true );
     xhr.setRequestHeader( 'Accept', 'application/json, text/javascript, */*; q=0.01' );
     xhr.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
     xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+    self.log( 'Sending data...' );
     xhr.send( data );
-    xhr = null;
   },
 
   /**
