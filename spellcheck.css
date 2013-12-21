@@ -221,8 +221,7 @@ div.spell-wrap div.spell-ignorebtns button {
   clear: both;
 }
 
-div.spell-wrap div.spell-changebtns button:last-child,
-div.spell-wrap div.spell-ignorebtns button:last-child {
+div.spell-wrap div.spell-changebtns button:last-child {
   margin-bottom: 0;
 }
 
