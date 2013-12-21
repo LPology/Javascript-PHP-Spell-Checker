@@ -4,7 +4,7 @@ Change Log
 spellcheck.js:
 * Added `onOpen()` and `onClose()` callback methods
 * Added `destroy()` method for removing spell check functionality
-* `name` option is now properly URI encoded prior to server request
+* The `name` option is now properly URI encoded prior to server request
 * Event message "OK" button is now given focus when displayed to allow closing with "Enter" button
 
 spellcheck.css:
@@ -12,7 +12,7 @@ spellcheck.css:
 * Added several IE7-specific enhancements
 
 spellcheck.php:
-* Added `/u` modifier to `preg_split()` regex pattern to properly handle words with accents - <a href="https://github.com/LPology/Javascript-PHP-Spell-Checker/pull/1">#1</a> (special thanks to <a href="https://github.com/tssk">tssk</a> for submitting this)
+* Added `/u` modifier to `preg_split()` regex pattern to properly handle words with accents - <a href="https://github.com/LPology/Javascript-PHP-Spell-Checker/pull/1">#1</a> (special thanks to <a href="https://github.com/tssk">tssk</a> for this)
 
 ### Version 1.4 ###
 * Plugin is now wrapped in an IIFE
