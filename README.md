@@ -149,7 +149,7 @@ sudo service httpd restart
     <tr>
       <td>destroy</td>
       <td>none</td>
-      <td>Function to be called when spell checker is opened, after successful server response.<br /><br />The function gets passed two arguments: (1) a reference to the spell check button; (2) a string containing the text that is to be spell checked.</td>
+      <td>Completely removes spell check functionality.</td>
     </tr>   
   </tbody>
 </table>
