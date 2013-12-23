@@ -148,8 +148,8 @@ sudo service httpd restart
   <tbody>
     <tr>
       <td>destroy</td>
-      <td>none</td>
-      <td>Completely removes spell check functionality.</td>
+      <td><i>none</i></td>
+      <td>Completely removes spell check functionality. All event listeners, CSS classes, and DOM elements added by the plugin are removed.</td>
     </tr>   
   </tbody>
 </table>
