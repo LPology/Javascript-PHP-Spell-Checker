@@ -60,7 +60,9 @@ Then restart Apache:
 sudo service httpd restart
 ```
 
-### API Reference - Settings ###
+### API Reference ###
+
+#### Settings ####
 
 <table>
   <thead>
@@ -110,7 +112,7 @@ sudo service httpd restart
   </tbody>
 </table>
 
-### API Reference - Callback Functions ###
+#### Callback Functions ####
 
 <table>
   <thead>
