@@ -135,7 +135,7 @@ sudo service httpd restart
   </tbody>
 </table>
 
-### API Reference - Instance Methods ###
+#### Instance Methods ####
 
 <table>
   <thead>
