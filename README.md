@@ -60,6 +60,55 @@ Then restart Apache:
 sudo service httpd restart
 ```
 
+### API Reference - Settings ###
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>action</td>
+      <td>String<br />Default: <code>""</code></td>
+      <td>Location of spellcheck.php</td>
+    </tr>
+    
+    <tr>
+      <td>button</td>
+      <td>Mixed<br />Default: <code>""</code></td>
+      <td>Button that opens spell checker. Accepts an element ID string, element, or jQuery object.</td>
+    </tr>
+
+    <tr>
+      <td>textInput</td>
+      <td>Mixed<br />Default: <code>""</code></td>
+      <td>Text input to spell check. Accepts an element ID string, element, or jQuery object.</td>
+    </tr>
+
+    <tr>
+      <td>name</td>
+      <td>String<br />Default: <code>""</code></td>
+      <td>Parameter name of text sent to server.</td>
+    </tr>
+
+    <tr>
+      <td>data</td>
+      <td>Object<br />Default: <code>{}</code></td>
+      <td>Additional data to send to the server.</td>
+    </tr>    
+    
+    <tr>
+      <td>debug</td>
+      <td>Boolean<br />Default: <code>false</code></td>
+      <td>Set to <code>true</code> to log progress messages and server response in the console.</td>
+    </tr>    
+    
+  </tbody>
+</table>
+
 ### License ###
 Released under the MIT license.
 
