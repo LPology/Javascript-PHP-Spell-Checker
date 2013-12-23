@@ -132,7 +132,7 @@ sudo service httpd restart
     <tr>
       <td>onClose</td>
       <td><code>button</code> (Element),<br /><code>text</code> (String)</td>
-      <td>Function to be called after the spell checker is closed.<br /><br />The function gets passed two arguments: (1) a reference to the spell check button; (2) a string containing the spell checked text, with any changes.</td>
+      <td>Function to be called after the spell checker is closed.<br /><br />The function gets passed two arguments: (1) a reference to the spell check button; (2) a string containing the spell checked text, including any changes.</td>
     </tr>    
   </tbody>
 </table>
