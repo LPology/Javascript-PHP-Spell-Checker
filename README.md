@@ -74,7 +74,7 @@ sudo service httpd restart
     <tr>
       <td>action</td>
       <td>String<br />Default: <code>""</code></td>
-      <td>Location of spellcheck.php</td>
+      <td>Location of spellcheck.php on the server.</td>
     </tr>
     
     <tr>
@@ -107,6 +107,50 @@ sudo service httpd restart
       <td>Set to <code>true</code> to log progress messages and server response in the console.</td>
     </tr>    
     
+  </tbody>
+</table>
+
+### API Reference - Callback Functions ###
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Arguments</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>onOpen</td>
+      <td><code>button</code> (Element),<br /><code>text</code> (String)</td>
+      <td>Function to be called when spell checker is opened, after successful server response.<br /><br />The function gets passed two arguments: (1) a reference to the spell check button; (2) a string containing the text that is to be spell checked.</td>
+    </tr>
+    
+    <tr>
+      <td>onClose</td>
+      <td><code>button</code> (Element),<br /><code>text</code> (String)</td>
+      <td>Function to be called after the spell checker is closed.<br /><br />The function gets passed two arguments: (1) a reference to the spell check button; (2) a string containing the spell checked text, with any changes.</td>
+    </tr>    
+  </tbody>
+</table>
+
+### API Reference - Instance Methods ###
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Arguments</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>destroy</td>
+      <td><i>none</i></td>
+      <td>Completely removes upload functionality</td>
+    </tr>  
   </tbody>
 </table>
 
