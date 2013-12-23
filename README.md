@@ -61,6 +61,7 @@ sudo service httpd restart
 ```
 
 ### API Reference - Settings ###
+
 <table>
   <thead>
     <tr>
