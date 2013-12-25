@@ -4,6 +4,7 @@ Change Log
 spellcheck.js:
 * Overhauled undo functionality for improved performance and support for reversal of multiple, consecutive changes
 * Combined `_showReviewer()` with `_begin()` to eliminate an unnecessary function call
+* Removed some unnecessary variable copying
 
 ### Version 1.5.1 ###
 spellcheck.js:
