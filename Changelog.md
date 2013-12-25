@@ -1,5 +1,10 @@
 Change Log 
 ============================
+### Version 1.5.2 ###
+spellcheck.js:
+* Overhauled undo functionality for improved performance and support for reversal of multiple, consecutive changes
+* Combined `_showReviewer()` with `_begin()` to eliminate an unnecessary function call
+
 ### Version 1.5.1 ###
 spellcheck.js:
 * Added `debug` option to view progress messages and server response in the console
