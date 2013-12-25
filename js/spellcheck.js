@@ -383,9 +383,6 @@ sc.SpellChecker.prototype = {
     });
 
     sc.addEvent( 'spell-undo' + this._uId, 'click', function() {
-      if ( !self._canUndo ) {
-        return;
-      }
       self._undoChange();
     });
 
@@ -484,7 +481,6 @@ sc.SpellChecker.prototype = {
 
     // Get the text that we're going to spell check
     this._text = this._textInput.value;
-    this._canUndo = false;
     this._isOpen = true;
 
     // Array of objects containing change history for "Undo"
@@ -519,7 +515,7 @@ sc.SpellChecker.prototype = {
     _( 'spelling-suggestions' + this._uId ).options.length = 0;
 
     // Reset everything after finishing
-    this._text = this._wordObject = this._wordKeys = this._currentWord = this._wordMatches = this._matchOffset = this._undo = this._canUndo = this._isOpen = null;
+    this._text = this._wordObject = this._wordKeys = this._currentWord = this._wordMatches = this._matchOffset = this._undo = this._isOpen = null;
 
     // Removes listener for escape key
     sc.removeEvent( document, 'keyup', this._closeOnEsc );
@@ -594,7 +590,6 @@ sc.SpellChecker.prototype = {
 
     // Disable "Undo" in case the prior action was a change
     _( 'spell-undo' + this._uId ).disabled = true;
-    this._canUndo = false;
     
     // Empty the change history array to help keep it under control
     // Apparently this is the fasted method: http://jsperf.com/array-destroy/32
@@ -637,7 +632,6 @@ sc.SpellChecker.prototype = {
 
     // Enable the "Undo" button
     _( 'spell-undo' + this._uId ).disabled = false;
-    this._canUndo = true;
 
     if ( selected_option > -1 ) {
       new_word = select.options[selected_option].text; // Use suggestion if one is selected
@@ -725,7 +719,6 @@ sc.SpellChecker.prototype = {
 
     // Disable "Undo" button if no more changes to undo
     if ( this._undo.length < 1 ) {
-      this._canUndo = false;
       _( 'spell-undo' + this._uId ).disabled = true;
     }
   },
@@ -879,7 +872,6 @@ sc.SpellChecker.prototype = {
 
       // Open the review box if there were spelling errors found
       if ( response.errors && response.errors === true ) {
-        this._canUndo = false;
         this._wordObject = response.words;
         this._wordKeys = sc.objectKeys( this._wordObject );
         this._matchOffset = 1;
