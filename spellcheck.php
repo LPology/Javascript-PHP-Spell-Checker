@@ -2,7 +2,7 @@
 
 /**
  * Javascript/PHP Spell Checker
- * Version 1.5.2
+ * Version 1.5.3
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012-2013 LPology, LLC  

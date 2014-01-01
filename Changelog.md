@@ -1,5 +1,9 @@
 Change Log 
 ============================
+### Version 1.5.3 ###
+spellcheck.css:
+* Added `box-sizing` rule to elements within spell check box
+
 ### Version 1.5.2 ###
 spellcheck.js:
 * Overhauled undo functionality for improved performance and support for reversal of multiple, consecutive changes

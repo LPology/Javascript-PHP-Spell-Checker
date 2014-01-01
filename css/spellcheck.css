@@ -1,12 +1,24 @@
 /**
  * Javascript/PHP Spell Checker
- * Version 1.5.2
+ * Version 1.5.3
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012-2013 LPology, LLC
  * Released under the MIT license
  */
-
+ 
+div.spell-wrap,
+div.spell-msg,
+div.spell-wrap div,
+div.spell-msg div,
+div.spell-wrap input,
+div.spell-wrap input[type="text"],
+div.spell-wrap hr {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+ 
 div.spell-wrap div {
   display: block;
 }
