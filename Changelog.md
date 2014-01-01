@@ -2,7 +2,7 @@ Change Log
 ============================
 ### Version 1.5.3 ###
 spellcheck.css:
-* Added `box-sizing` rule to elements within spell check box
+* Added `box-sizing: content-box;` rule to elements within spell check box
 
 ### Version 1.5.2 ###
 spellcheck.js:
