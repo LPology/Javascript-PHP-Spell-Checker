@@ -2,10 +2,10 @@
 
 /**
  * Javascript/PHP Spell Checker
- * Version 1.5.3
+ * Version 1.6
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
- * Copyright 2012-2013 LPology, LLC  
+ * Copyright 2012-2015 LPology, LLC  
  * Released under the MIT license
  *
  * Requires the Pspell extension
