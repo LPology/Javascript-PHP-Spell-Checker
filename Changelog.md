@@ -1,5 +1,10 @@
 Change Log 
 ============================
+### Version 1.6.1 ###
+spellcheck.js:
+* Updated `sc.trim()` method to use native trim if available
+* Clicking background overlay will now close the spell check window
+
 ### Version 1.5.3 ###
 spellcheck.css:
 * Added `box-sizing: content-box;` rule to elements within spell check box

@@ -1,6 +1,6 @@
 /**
  * Javascript/PHP Spell Checker
- * Version 1.6
+ * Version 1.6.1
  * https://github.com/LPology/Javascript-PHP-Spell-Checker
  *
  * Copyright 2012-2015 LPology, LLC
@@ -10,28 +10,28 @@
 ;(function( window, document, undefined ) {
 
     var sc = window.sc || {},
-    
+
     // Pre-compile and cache our regular expressions
     rLWhitespace = /^\s+/,
     rTWhitespace = /\s+$/,
     rLNonWhitespace = /[^\s]+/,
     rRNonWhitespace = /[^\s]+$/,
-    
+
     // sc.getUID
     uidReplace = /[xy]/g,
-    
+
     //sc.encodeHTML()
     rAmp = /&/g,
     rQuot = /"/g,
     rQuot2 = /'/g,
     rLt = /</g,
     rGt = />/g,
-    
+
     rAlphaNum = /^\w+$/,
-    
+
     // Holds cached regular expressions for _getRegex()
     regexCache = {},
-    
+
     _ = function( elem ) {
         return document.getElementById( elem );
     };
@@ -89,7 +89,7 @@ sc.extendObj = function( first, second ) {
  */
 sc.isEmpty = function( obj ) {
     "use strict";
-    
+
     for ( var prop in obj ) {
         if ( obj.hasOwnProperty( prop ) ) {
             return false;
@@ -100,7 +100,7 @@ sc.isEmpty = function( obj ) {
 
 sc.contains = function( array, item ) {
     "use strict";
-    
+
     var i = array.length;
     while ( i-- ) {
         if ( array[i] === item ) {
@@ -158,10 +158,19 @@ sc.remove = function( elem ) {
 /**
 * Removes whtie space from left and right of string
 */
-sc.trim = function( text ) {
-    "use strict";
-    return text.toString().replace( rLWhitespace, '' ).replace( rTWhitespace, '' );
-};
+var trim = "".trim;
+
+sc.trim = trim && !trim.call("\uFEFF\xA0") ?
+    function( text ) {
+        return text === null ?
+            "" :
+            trim.call( text );
+    } :
+    function( text ) {
+        return text === null ?
+            "" :
+            text.toString().replace( rLWhitespace, '' ).replace( rTWhitespace, '' );
+    };
 
 /**
 * Generates unique ID
@@ -180,18 +189,18 @@ sc.getId = function() {
 
 sc.addEvent = function( elem, type, fn ) {
     "use strict";
-    
+
     if ( typeof elem === 'string' ) {
         elem = document.getElementById( elem );
     }
-    
+
     if ( elem.addEventListener ) {
         elem.addEventListener( type, fn, false );
-        
+
     } else {
         elem.attachEvent( 'on' + type, fn );
     }
-    
+
     return function() {
         sc.removeEvent( elem, type, fn );
     };
@@ -199,14 +208,14 @@ sc.addEvent = function( elem, type, fn ) {
 
 sc.removeEvent = function(elem, type, fn) {
     "use strict";
-    
+
     if (typeof elem === 'string') {
         elem = document.getElementById( elem );
     }
-    
+
     if ( elem.removeEventListener ) {
         elem.removeEventListener( type, fn, false );
-        
+
     } else {
         elem.detachEvent( 'on' + type, fn );
     }
@@ -426,6 +435,10 @@ sc.SpellChecker.prototype = {
       self._closeChecker();
     });
 
+    sc.addEvent( 'spell-check-overlay' + this._uId, 'click', function() {
+      self._closeChecker();
+    });
+
     sc.addEvent( this._undoBtn, 'click', function() {
       self._undoChange();
     });
@@ -496,7 +509,7 @@ sc.SpellChecker.prototype = {
     "use strict";
 
     if ( this._settings.debug && window.console ) {
-      console.log( '[spell checker] ' + str );
+      window.console.log( '[spell checker] ' + str );
     }
   },
 
@@ -1017,6 +1030,7 @@ sc.SpellChecker.prototype = {
 
     // Screen overlay
     this._overlay.className = 'spell-check-overlay';
+    this._overlay.id = 'spell-check-overlay' + this._uId;
     document.body.appendChild( this._overlay );
 
     // Spell check box
