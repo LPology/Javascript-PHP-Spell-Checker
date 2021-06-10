@@ -78,31 +78,26 @@ sudo service httpd restart
       <td>String<br />Default: <code>""</code></td>
       <td>Location of spellcheck.php on the server.</td>
     </tr>
-    
     <tr>
       <td>button</td>
       <td>Mixed<br />Default: <code>""</code></td>
       <td>Button that opens spell checker. Accepts an element ID string, element, or jQuery object.</td>
     </tr>
-
     <tr>
       <td>textInput</td>
       <td>Mixed<br />Default: <code>""</code></td>
       <td>Text input to spell check. Accepts an element ID string, element, or jQuery object.</td>
     </tr>
-
     <tr>
       <td>name</td>
       <td>String<br />Default: <code>""</code></td>
       <td>Parameter name of text sent to server.</td>
     </tr>
-
     <tr>
       <td>data</td>
       <td>Object<br />Default: <code>{}</code></td>
       <td>Additional data to send to the server.</td>
     </tr>    
-    
     <tr>
       <td>debug</td>
       <td>Boolean<br />Default: <code>false</code></td>
@@ -127,8 +122,7 @@ sudo service httpd restart
       <td>onOpen</td>
       <td><code>button</code> (Element),<br /><code>text</code> (String)</td>
       <td>Function to be called when spell checker is opened, after successful server response.<br /><br />The function gets passed two arguments: (1) a reference to the spell check button; (2) a string containing the text that is to be spell checked.</td>
-    </tr>
-    
+	  </tr>
     <tr>
       <td>onClose</td>
       <td><code>button</code> (Element),<br /><code>text</code> (String)</td>
